@@ -38,9 +38,12 @@ OAM: 2 16-bit addresses
 */
 
 
-foreach ( oam_register[i] ) begin
-    assign object_enabled[i] = (oam_register[i][31:31] == 1);
-end
+generate;
+  genvar i;
+  for (i = 0; i < OAMObjects; i++) begin
+    assign object_enabled[i] = (oam_register[i][31]);
+  end
+endgenerate
 
 
 endmodule
