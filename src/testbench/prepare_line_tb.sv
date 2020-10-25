@@ -48,6 +48,8 @@ module prepare_line_tb();
     foreach ( BufferArray[i] ) begin
         BufferArray[i] = 0;
     end
+    reset = 0;
+    #1;
     reset = 1;
     clk = 1;
     sx = 0;
