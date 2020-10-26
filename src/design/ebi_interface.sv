@@ -24,7 +24,6 @@ module ebi_interface(
     // Assuming 16-bit bus write only
     input wire [15:0] EBI_AD,
     input wire EBI_ALE,
-    input wire EBI_CS,
     input wire EBI_RE,
     input wire EBI_WE,
     input wire reset,

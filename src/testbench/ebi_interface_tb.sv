@@ -24,8 +24,8 @@ module ebi_interface_tb();
     
     logic [15:0] EBI_AD;
 
-    logic EBI_ALE;
     logic EBI_CS;
+    logic EBI_ALE;
     logic EBI_RE;
     logic EBI_WE;
     logic reset;
@@ -40,7 +40,6 @@ module ebi_interface_tb();
         .reset               (reset),
         .EBI_AD              (EBI_AD),
         .EBI_ALE             (EBI_ALE),
-        .EBI_CS              (EBI_CS),
         .EBI_RE              (EBI_RE),
         .EBI_WE              (EBI_WE),
         .clk                 (clk),
