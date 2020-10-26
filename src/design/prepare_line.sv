@@ -22,7 +22,7 @@
 
 module prepare_line(clk, reset, oam_data, sx, sy, oam_addr, BufferArray, line_prepeared);
     parameter maxObjectPerLine = 32, OAMMaxObjects = 256;
-    parameter Start = 0, LineCheck = 1, Increment = 2, End = 3;
+    localparam Start = 0, LineCheck = 1, Increment = 2, End = 3;
 
     input wire clk;
     input wire reset;
@@ -95,7 +95,7 @@ BufferArray 2 dim array [index]
                     state <= End;
                 end
                 else begin
-                    if (BufferArrayIndex < maxObjectPerLine || OAMIndex < (OAMMaxObjects - 1)  ) begin
+                    if (BufferArrayIndex < maxObjectPerLine && OAMIndex < (OAMMaxObjects - 1)  ) begin
                         line_prepeared_buffer <= 0;
                         if (oam_data[31:31] == 1 && SpriteOnLine == 1) begin
                             BufferArray[BufferArrayIndex][8:1] <= OAMIndex;
