@@ -1,18 +1,18 @@
 `timescale 1ns / 1ps
 
-module oam_memory_tb(
+module palette_memory_tb(
 
     );
     
     logic clk;
-    logic[6:0] write_addr;
-    logic [5:0] read_addr;
+    logic[7:0] write_addr;
+    logic [8:0] read_addr;
     logic write_enable;
     logic [15:0] write_data;
     
-    logic [31:0] ram_data_out;
+    logic [23:0] ram_data_out;
     
-    oam_memory mem(
+    palette_memory mem(
         .clk(clk),
         .write_enable(write_enable),
         .write_addr(write_addr),
@@ -29,11 +29,9 @@ module oam_memory_tb(
         write_enable = 1;
         write_data   = 16'h1234;
 
-        #5
-
         #10
         write_addr = 1;
-        write_data = 16'h5678;
+        write_data = 16'h56;
 
         #10
 
@@ -42,12 +40,8 @@ module oam_memory_tb(
 
         #10
         write_addr = 3;
-        write_data = 16'h5432;
-
+        write_data = 16'h54;
         
-        #5
-        write_enable = 0;
-
         #5
         read_addr = 1;
     
