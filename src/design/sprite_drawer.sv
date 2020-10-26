@@ -51,28 +51,35 @@ module sprite_drawer #(
     input wire   [VRAM_DATA_SIZE-1:0] vram_d,
     input wire   [SECOND_ARRAY_SIZE-1:0][OAM_ADDR_SIZE:0] second_array, // [OAM_ADDR_SIZE:1] is address, [0] is active/inactive
     input wire   [LINE_NUMBER_WIDTH-1:0] line_number,
-    output logic [DISPLAY_WIDTH-1:0][2:0][COLOR_DEPTH-1:0] line_buffer
+    output logic [DISPLAY_WIDTH-1:0][7:0] line_buffer
 );
 
 localparam int SECOND_ARRAY_INDEX_WIDTH = $clog2(SECOND_ARRAY_SIZE);
-localparam Setup=0, GetLine=1;
-
-logic [1:0] state;
 
 logic priority_d, priority_q;
 logic [SECOND_ARRAY_INDEX_WIDTH-1:0] array_index_d, array_index_q;
+logic last_object_is_fetched;
+
+logic [7:0] object_address;
+logic object_exists;
+assign object_address = second_array[array_index_q][8:1];
+assign object_exists = second_array[array_index_q][0];
 
 logic [OAM_DATA_SIZE-1:0] object;
-logic [7:0] object_spriteref = object[7:0];
-logic [9:0] object_xpos      = object[17:8];
-logic [9:0] object_ypos      = object[27:18];
-logic object_priority        = object[28];
-logic object_xflip           = object[29];
-logic object_yflip           = object[30];
-logic object_enable          = object[31];
-
-logic [7:0] object_index = second_array[array_index_q][8:1];
-logic object_exists = second_array[array_index_q][0];
+logic [7:0] object_spriteref;
+logic [9:0] object_xpos;
+logic [9:0] object_ypos;
+logic object_priority;
+logic object_xflip;
+logic object_yflip;
+logic object_enable;
+assign object_spriteref = object[7:0];
+assign object_xpos      = object[17:8];
+assign object_ypos      = object[27:18];
+assign object_priority  = object[28];
+assign object_xflip     = object[29];
+assign object_yflip     = object[30];
+assign object_enable    = object[31];
 
 logic [15:0][7:0] sprite_line;
 
@@ -80,16 +87,16 @@ always_comb begin
     priority_d <= priority_q;
     
     if(enable) begin
-        oam_a <= object_index;
+        oam_a <= object_address;
         vram_a <= {object_spriteref, 4'b0};
         array_index_d <= array_index_q + 1;
         sprite_line <= vram_d;
-        done <= ~object_exists;
+        last_object_is_fetched <= (~object_exists) | (array_index_q >= SECOND_ARRAY_SIZE-1);
     end else begin
         priority_d <= 0;
         array_index_d <= 0;
         sprite_line <= 0;
-        done <= 0;
+        last_object_is_fetched <= 0;
         // shared busses must be undriven when module is disabled
         oam_a <= 'bz;
         vram_a <= 'bz;
@@ -102,11 +109,13 @@ always_ff @(posedge clk, posedge rst) begin
         array_index_q <= 0;
         object <= 0;
         line_buffer <= 0;
+        done <= 0;
     end else begin
         priority_q <= priority_d;
         array_index_q <= array_index_d;
         object <= oam_d;
         line_buffer[object_xpos +: 16] <= sprite_line;
+        done <= last_object_is_fetched;
     end
 end
 
