@@ -114,7 +114,7 @@ set files [list \
  [file normalize "${origin_dir}/src/design/ebi_interface.sv"] \
  [file normalize "${origin_dir}/src/design/simple_ram.sv"] \
  [file normalize "${origin_dir}/src/design/display_driver.sv"] \
- [file normalize "${origin_dir}/src/design/prepare_line.sv"] \
+ [file normalize "${origin_dir}/src/design/oam_memory.sv"] \
  [file normalize "${origin_dir}/src/design/oam_registers.sv"] \
  [file normalize "${origin_dir}/src/design/sprite_drawer.sv"] \
 ]
@@ -146,7 +146,7 @@ set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
 
-set file "$origin_dir/src/design/prepare_line.sv"
+set file "$origin_dir/src/design/oam_memory.sv"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
@@ -168,7 +168,6 @@ set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
 # Set 'sources_1' fileset properties
 set obj [get_filesets sources_1]
 set_property -name "top" -value "display_driver" -objects $obj
-set_property -name "top_auto_set" -value "0" -objects $obj
 
 # Create 'constrs_1' fileset (if not found)
 if {[string equal [get_filesets -quiet constrs_1] ""]} {
@@ -197,12 +196,14 @@ if {[string equal [get_filesets -quiet sim_1] ""]} {
 # Set 'sim_1' fileset object
 set obj [get_filesets sim_1]
 set files [list \
+
  [file normalize "${origin_dir}/src/testbench/sprite_drawer_tb.sv"] \
  [file normalize "${origin_dir}/src/testbench/linedraw_tb.sv"] \
  [file normalize "${origin_dir}/src/testbench/prepare_line_tb.sv"] \
  [file normalize "${origin_dir}/src/testbench/display_timings_tb.sv"] \
- [file normalize "${origin_dir}/src/testbench/clock_gen_tb.sv"] \
+ [file normalize "${origin_dir}/src/testbench/prepare_line_tb.sv"] \
  [file normalize "${origin_dir}/src/testbench/display_driver_tb.sv"] \
+ [file normalize "${origin_dir}/src/testbench/clock_gen_tb.sv"] \
  [file normalize "${origin_dir}/src/testbench/ebi_interface_tb.sv"] \
 ]
 add_files -norecurse -fileset $obj $files
@@ -234,12 +235,17 @@ set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sim_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
 
-set file "$origin_dir/src/testbench/clock_gen_tb.sv"
+set file "$origin_dir/src/testbench/prepare_line_tb.sv"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sim_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
 
 set file "$origin_dir/src/testbench/display_driver_tb.sv"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sim_1] [list "*$file"]]
+set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
+
+set file "$origin_dir/src/testbench/clock_gen_tb.sv"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sim_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
