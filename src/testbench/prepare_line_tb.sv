@@ -28,12 +28,12 @@ module prepare_line_tb();
     logic [9:0]     sx;
     logic [9:0]     sy; 
     logic [5:0]    oam_addr;
-    logic [8:0] BufferArray [32 - 1 : 0];
+    logic  [32 - 1 : 0][8:0] BufferArray;
     logic line_prepeared;
 
     // Testbench parameters
     logic [64:0] clk_count;
-    logic [8:0] BufferArrayCheck [32 - 1 : 0];
+    logic [32 - 1 : 0][8:0] BufferArrayCheck;
     logic [64:0] bufferIncrement;
 
     prepare_line #(

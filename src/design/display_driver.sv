@@ -84,8 +84,9 @@ module display_driver (
 
     oam_memory OAM(
         .clk(clk_pix),              // Clock to drive the RAM module
+        .reset(!btn_rst),
         .read_addr(oam_read_address),  // 5 bits to address 64 locations
-        .write_addr(mcu_write_address), // 6 bits to address 128 locations
+        .write_addr(mcu_write_address[6:0]), // 6 bits to address 128 locations
         .write_data(mcu_write_data),
         .write_enable(write_enable_oam),
 
@@ -98,7 +99,7 @@ module display_driver (
     tam_memory TAM(
         .clk(clk_pix),              // Clock to drive the RAM module
         .read_addr(tam_read_address),  // 5 bits to address 64 locations
-        .write_addr(mcu_write_address), // 6 bits to address 128 locations
+        .write_addr(mcu_write_address[6:0]), // 6 bits to address 128 locations
         .write_data(mcu_write_data),
         .write_enable(write_enable_tam),
 
@@ -112,7 +113,7 @@ module display_driver (
     vram_sprite_memory SPRITE(
         .clk(clk_pix),              // Clock to drive the RAM module
         .read_addr(sprite_read_address),  // 5 bits to address 64 locations
-        .write_addr(mcu_write_address), // 6 bits to address 128 locations
+        .write_addr(mcu_write_address[14:0]), // 6 bits to address 128 locations
         .write_data(mcu_write_data),
         .write_enable(write_enable_vram_sprite),
 
@@ -125,7 +126,7 @@ module display_driver (
     vram_tile_memory TILE(
         .clk(clk_pix),              // Clock to drive the RAM module
         .read_addr(tile_read_address),  // 5 bits to address 64 locations
-        .write_addr(mcu_write_address), // 6 bits to address 128 locations
+        .write_addr(mcu_write_address[14:0]), // 6 bits to address 128 locations
         .write_data(mcu_write_data),
         .write_enable(write_enable_vram_tile),
 
@@ -139,7 +140,7 @@ module display_driver (
     palette_memory PALETTE(
         .clk(clk_pix),                  // Clock to drive the RAM module
         .read_addr(palette_read_addr),  // 9 bits to address 512 locations
-        .write_addr(mcu_write_address), // 8 bits to address 256 locations
+        .write_addr(mcu_write_address[7:0]), // 8 bits to address 256 locations
         .write_data(mcu_write_data),
         .write_enable(write_enable_palette),
 
@@ -148,7 +149,7 @@ module display_driver (
 
     
     wire prepare_line_done;
-    logic [8:0] LineObjectArray [32 - 1 : 0];
+    logic [32 - 1 : 0][8:0] LineObjectArray;
     
     prepare_line #(
         .maxObjectPerLine(32), 
@@ -164,8 +165,33 @@ module display_driver (
         .line_prepeared (prepare_line_done)
     );
 
-    logic [7:0] LineBuffer_next_line    [CORDW-1:0];
-    logic [7:0] LineBuffer_current_line [CORDW-1:0];
+    wire sprite_drawer_done;
+    sprite_drawer #(
+        .VRAM_ADDR_SIZE       (12),
+        .VRAM_DATA_SIZE       (128),
+        .SECOND_ARRAY_SIZE    (32),
+        .OAM_ADDR_SIZE        (6),
+        .OAM_DATA_SIZE        (32),
+        .COLOR_DEPTH          (8),
+        .DISPLAY_WIDTH        (600),
+        .DISPLAY_HEIGHT       (480),
+        .LINE_NUMBER_WIDTH    ($size(sy))
+    ) u_sprite_drawer (
+        .clk(clk_pix),
+        .rst(!btn_rst),
+        .enable(prepare_line_done),
+        .done(sprite_drawer_done),
+        .oam_a(oam_read_address),
+        .oam_d(oam_read_data),
+        .vram_a(sprite_read_address),
+        .vram_d(sprite_read_data),
+        .second_array(LineObjectArray),
+        .line_number(sy),
+        .line_buffer(LineBuffer_next_line)
+    );
+    
+    logic [CORDW-1:0][7:0] LineBuffer_next_line;
+    logic [CORDW-1:0][7:0] LineBuffer_current_line;
     always_ff @(posedge clk_pix) begin
         if (last_y != sy) begin
             LineBuffer_current_line <= LineBuffer_next_line;
@@ -173,29 +199,8 @@ module display_driver (
         last_y <= sy;
     end
 
-    /*
-    ram_16x12d_infer u_ram_16x12d_infer (
-        .data_out         (data_out),
-        .write_enable     (write_enable),
-        .data_inn         (data_inn),
-        .read_address     (read_address),
-        .write_address    (write_address),
-        .clk              (clk_pix)
-    );
-    */
+    assign palette_read_addr = !de ? 8'h0 : LineBuffer_current_line[sx_next];
 
-    //logic [11:0] addr_counter;
-    //assign write_address = addr_counter; 
-    //assign read_address = {sx[9:5],sy[9:5]};
-    
-    /*
-    assign write_enable = 1;
-    always_ff @(posedge clk_pix) begin
-        addr_counter <= addr_counter + 1;
-        data_inn <= addr_counter[11:0];
-        
-    end
-    */
 
     // size of screen (excluding blanking)
     localparam H_RES = 640;
@@ -203,12 +208,6 @@ module display_driver (
 
     logic animate;  // high for one clock tick at start of blanking
     always_comb animate = (sy == 480 && sx == 0);
-
-    assign palette_read_addr = !de ? 8'h0 : LineBuffer_current_line[sx_next];
-    // LineBuffer_current_line[sx] 8 bit number
-    // 
-    //wire[8:0] palette_read_addr;
-    //wire[23:0] palette_read_data;
 
     // VGA output
     always_comb begin

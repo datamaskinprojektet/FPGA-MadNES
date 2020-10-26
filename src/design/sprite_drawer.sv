@@ -103,18 +103,30 @@ always_comb begin
     end
 end
 
+generate;
+    genvar i;
+    for (i=0; i<16; i++) begin
+        always_ff @(posedge clk, posedge rst) begin
+            if (rst) begin
+                line_buffer <= 0;
+            end else begin
+                line_buffer[object_xpos+i] <= sprite_line[i];
+            end
+        end
+    end
+endgenerate
+
+
 always_ff @(posedge clk, posedge rst) begin
     if (rst) begin
         priority_q <= 0;
         array_index_q <= 0;
         object <= 0;
-        line_buffer <= 0;
         done <= 0;
     end else begin
         priority_q <= priority_d;
         array_index_q <= array_index_d;
         object <= oam_d;
-        line_buffer[object_xpos +: 16] <= sprite_line;
         done <= last_object_is_fetched;
     end
 end

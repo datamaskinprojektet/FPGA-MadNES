@@ -3,6 +3,7 @@
 
 module oam_memory(
     input wire clk,              // Clock to drive the RAM module
+    input wire reset,
     input wire[5:0]  read_addr,  // 5 bits to address 64 locations
     input wire[6:0]  write_addr, // 6 bits to address 128 locations
     input wire[15:0] write_data,
@@ -14,7 +15,7 @@ module oam_memory(
 
 
 reg[6:0] write_address_inferred;
-reg[1:0] write_count = 0;
+reg[1:0] write_count;
 
 reg[15:0] buffer_input;
 reg[31:0] write_data_total;
@@ -30,24 +31,29 @@ reg [31:0] OAM_RAM[63:0]; // OAM Ram consists of 127 16-bit elements
 
 reg[31:0] output_data;
 
-always @(posedge clk) begin
+always_ff @(posedge clk) begin
     output_data <= OAM_RAM[read_addr];
 end
 
-always @(posedge clk) begin
+always_ff @(posedge clk or posedge reset) begin
     
-    if(write_enable && write_count == 0) begin
-        buffer_input <= write_data;
-        write_count <= 1;
-    end
-
-    if(write_enable && write_count == 1) begin
-        write_address_inferred <= write_addr / 2;
-        write_data_combine[15:0] = write_data;
-        write_data_combine[31:16] = buffer_input;
-        write_data_total <= write_data_total; 
-        OAM_RAM[write_addr / 2]  <= write_data_combine;
+    if (reset) begin
         write_count <= 0;
+    end
+    else begin
+        if(write_enable && write_count == 0) begin
+            buffer_input <= write_data;
+            write_count <= 1;
+        end
+
+        if(write_enable && write_count == 1) begin
+            write_address_inferred <= write_addr / 2;
+            write_data_combine[15:0] = write_data;
+            write_data_combine[31:16] = buffer_input;
+            write_data_total <= write_data_total; 
+            OAM_RAM[write_addr / 2]  <= write_data_combine;
+            write_count <= 0;
+        end
     end
 end
 
