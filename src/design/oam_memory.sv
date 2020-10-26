@@ -24,19 +24,22 @@ logic [31:0] write_data_combine;
    
 // Vivado-specific inference
 (* RAM_STYLE="BLOCK" *)
-reg [31:0] OAM_RAM[63:0]; // OAM Ram consists of 127 16-bit elements
+reg [15:0] OAM_RAM [127:0]; // OAM Ram consists of 127 16-bit elements
                              // An OAM entry is 32-bits, meaning that it spans
                              // 2 register blocks
 
 
 reg[31:0] output_data;
 
-always_ff @(posedge clk) begin
-    output_data <= OAM_RAM[read_addr];
-end
+// always_ff @(posedge clk) begin
+//     output_data <= OAM_RAM[read_addr];
+// end
 
-always_ff @(posedge clk or posedge reset) begin
-    
+always_ff @(posedge clk) begin
+    if (write_enable) begin
+        OAM_RAM[write_addr] = write_data;
+    end
+    /*
     if (reset) begin
         write_count <= 0;
     end
@@ -55,14 +58,15 @@ always_ff @(posedge clk or posedge reset) begin
             write_count <= 0;
         end
     end
+    */
 end
 
-always @(negedge write_enable) begin
-    write_count <= 0;
-end
+//always @(negedge write_enable) begin
+//    write_count <= 0;
+//end
 
-always @* begin
-    read_data = output_data;
+always_comb begin
+    read_data = { OAM_RAM[(read_addr << 1) + 1], OAM_RAM[read_addr << 1] };
 end
 
 endmodule
