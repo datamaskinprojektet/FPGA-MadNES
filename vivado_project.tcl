@@ -99,7 +99,7 @@ set_property -name "platform.board_id" -value "arty" -objects $obj
 set_property -name "sim.central_dir" -value "$proj_dir/${_xil_proj_name_}.ip_user_files" -objects $obj
 set_property -name "sim.ip.auto_export_scripts" -value "1" -objects $obj
 set_property -name "simulator_language" -value "Mixed" -objects $obj
-set_property -name "webtalk.xsim_launch_sim" -value "37" -objects $obj
+set_property -name "webtalk.xsim_launch_sim" -value "59" -objects $obj
 
 # Create 'sources_1' fileset (if not found)
 if {[string equal [get_filesets -quiet sources_1] ""]} {
@@ -116,8 +116,7 @@ set files [list \
  [file normalize "${origin_dir}/src/design/display_driver.sv"] \
  [file normalize "${origin_dir}/src/design/oam_memory.sv"] \
  [file normalize "${origin_dir}/src/design/oam_registers.sv"] \
- [file normalize "${origin_dir}/src/design/prepare_line.sv"] \
- [file normalize "${origin_dir}/src/design/palette_memory.sv"] \
+ [file normalize "${origin_dir}/src/design/sprite_drawer.sv"] \
 ]
 add_files -norecurse -fileset $obj $files
 
@@ -157,12 +156,7 @@ set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
 
-set file "$origin_dir/src/design/prepare_line.sv"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
-
-set file "$origin_dir/src/design/palette_memory.sv"
+set file "$origin_dir/src/design/sprite_drawer.sv"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
@@ -202,8 +196,10 @@ if {[string equal [get_filesets -quiet sim_1] ""]} {
 # Set 'sim_1' fileset object
 set obj [get_filesets sim_1]
 set files [list \
- [file normalize "${origin_dir}/src/testbench/palette_mem_tb.sv"] \
- [file normalize "${origin_dir}/src/testbench/oam_memory_tb.sv"] \
+
+ [file normalize "${origin_dir}/src/testbench/sprite_drawer_tb.sv"] \
+ [file normalize "${origin_dir}/src/testbench/linedraw_tb.sv"] \
+ [file normalize "${origin_dir}/src/testbench/prepare_line_tb.sv"] \
  [file normalize "${origin_dir}/src/testbench/display_timings_tb.sv"] \
  [file normalize "${origin_dir}/src/testbench/prepare_line_tb.sv"] \
  [file normalize "${origin_dir}/src/testbench/display_driver_tb.sv"] \
@@ -212,13 +208,24 @@ set files [list \
 ]
 add_files -norecurse -fileset $obj $files
 
+# Add local files from the original project (-no_copy_sources specified)
+set files [list \
+ [file normalize "${origin_dir}/vivado_project/sprite_drawer_tb_behav.wcfg" ]\
+]
+set added_files [add_files -fileset sim_1 $files]
+
 # Set 'sim_1' fileset file properties for remote files
-set file "$origin_dir/src/testbench/palette_mem_tb.sv"
+set file "$origin_dir/src/testbench/sprite_drawer_tb.sv"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sim_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
 
-set file "$origin_dir/src/testbench/oam_memory_tb.sv"
+set file "$origin_dir/src/testbench/linedraw_tb.sv"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sim_1] [list "*$file"]]
+set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
+
+set file "$origin_dir/src/testbench/prepare_line_tb.sv"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sim_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
@@ -255,7 +262,7 @@ set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
 # Set 'sim_1' fileset properties
 set obj [get_filesets sim_1]
 set_property -name "hbs.configure_design_for_hier_access" -value "1" -objects $obj
-set_property -name "top" -value "palette_memory_tb" -objects $obj
+set_property -name "top" -value "sprite_drawer_tb" -objects $obj
 set_property -name "top_auto_set" -value "0" -objects $obj
 set_property -name "top_lib" -value "xil_defaultlib" -objects $obj
 
