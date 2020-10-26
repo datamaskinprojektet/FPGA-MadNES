@@ -62,7 +62,7 @@ logic last_object_is_fetched;
 
 logic [7:0] object_address;
 logic object_exists;
-assign object_address = second_array[array_index_q][8:1];
+assign object_address = second_array[array_index_q][OAM_ADDR_SIZE:1];
 assign object_exists = second_array[array_index_q][0];
 
 logic [OAM_DATA_SIZE-1:0] object;
