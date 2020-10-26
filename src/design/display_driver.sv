@@ -8,9 +8,10 @@ module display_driver (
     // Input for EBI interface
     input       wire [15:0] EBI_AD,
     input       wire EBI_ALE,
-    input       wire EBI_CS,
+    // input       wire EBI_CS, // DEPRECATED: Use bank_select instead
     input       wire EBI_RE,
     input       wire EBI_WE,
+    input       wire [2:0] bank_select, // TODO: Map pins in constraints file
 
     output      logic vga_hsync,    // horizontal sync
     output      logic vga_vsync,    // vertical sync
@@ -32,13 +33,14 @@ module display_driver (
 
     // display timings
     localparam CORDW = 10;  // screen coordinate width in bits
-    logic [CORDW-1:0] sx, sy;
+    logic [CORDW-1:0] sx, sy, sx_next, last_y;
     logic de;
     display_timings timings_640x480 (
         .clk_pix,
         .rst(!clk_locked),  // wait for clock lock
         .sx(sx),
         .sy(sy),
+        .sx_next(sx_next),
         .hsync(vga_hsync),
         .vsync(vga_vsync),
         .de
@@ -46,26 +48,132 @@ module display_driver (
 
     logic [11:0] data_out;
     logic [15:0] read_address;
-    logic [15:0] data_inn;
-    logic [15:0] write_address;
+    logic [15:0] mcu_write_data;
+    logic [15:0] mcu_write_address;
     logic write_enable;
     logic data_ready;
-    
+
+    wire write_enable_oam;
+    wire write_enable_vram_sprite;
+    wire write_enable_vram_tile;
+    wire write_enable_palette;
+    wire write_enable_tam;
+
+    assign write_enable_oam =         (bank_select == 0) & write_enable;
+    assign write_enable_vram_sprite = (bank_select == 1) & write_enable;
+    assign write_enable_vram_tile =   (bank_select == 2) & write_enable;
+    assign write_enable_palette =     (bank_select == 3) & write_enable;
+    assign write_enable_tam =         (bank_select == 4) & write_enable;
+
+
     ebi_interface u_ebi_interface (
         // Assuming 16-bit bus multiplexing and write only
         .EBI_AD         (EBI_AD),
         .EBI_ALE        (EBI_ALE),
-        .EBI_CS         (EBI_CS),
         .EBI_RE         (EBI_RE),
         .EBI_WE         (EBI_WE),
         .reset          (!btn_rst),
         .clk            (clk_pix),
-        .address_out    (write_address),
-        .data_out       (data_inn),
+        .address_out    (mcu_write_address),
+        .data_out       (mcu_write_data),
         .data_ready     (write_enable)
     );
+
+    wire [5:0] oam_read_address;
+    wire [31:0] oam_read_data;
+
+    oam_memory OAM(
+        .clk(clk_pix),              // Clock to drive the RAM module
+        .read_addr(oam_read_address),  // 5 bits to address 64 locations
+        .write_addr(mcu_write_address), // 6 bits to address 128 locations
+        .write_data(mcu_write_data),
+        .write_enable(write_enable_oam),
+
+        .read_data(oam_read_data)
+    );
+
+    wire [15:0] tam_read_data;
+    wire [9:0] tam_read_address;
+
+    tam_memory TAM(
+        .clk(clk_pix),              // Clock to drive the RAM module
+        .read_addr(tam_read_address),  // 5 bits to address 64 locations
+        .write_addr(mcu_write_address), // 6 bits to address 128 locations
+        .write_data(mcu_write_data),
+        .write_enable(write_enable_tam),
+
+        .read_data(tam_read_data)
+
+    );
+
+    wire[11:0] sprite_read_address;
+    wire[127:0] sprite_read_data;
+
+    vram_sprite_memory SPRITE(
+        .clk(clk_pix),              // Clock to drive the RAM module
+        .read_addr(sprite_read_address),  // 5 bits to address 64 locations
+        .write_addr(mcu_write_address), // 6 bits to address 128 locations
+        .write_data(mcu_write_data),
+        .write_enable(write_enable_vram_sprite),
+
+        .read_data(sprite_read_data)
+    );
+
+    wire[11:0] tile_read_address;
+    wire[127:0] tile_read_data;
+
+    vram_tile_memory TILE(
+        .clk(clk_pix),              // Clock to drive the RAM module
+        .read_addr(tile_read_address),  // 5 bits to address 64 locations
+        .write_addr(mcu_write_address), // 6 bits to address 128 locations
+        .write_data(mcu_write_data),
+        .write_enable(write_enable_vram_tile),
+
+        .read_data(tile_read_data)
+    );
     
+
+    wire[8:0] palette_read_addr;
+    wire[23:0] palette_read_data;
+
+    palette_memory PALETTE(
+        .clk(clk_pix),                  // Clock to drive the RAM module
+        .read_addr(palette_read_addr),  // 9 bits to address 512 locations
+        .write_addr(mcu_write_address), // 8 bits to address 256 locations
+        .write_data(mcu_write_data),
+        .write_enable(write_enable_palette),
+
+        .read_data(palette_read_data)   // One palette entry is 24 bits
+    );
+
     
+    wire prepare_line_done;
+    logic [8:0] LineObjectArray [32 - 1 : 0];
+    
+    prepare_line #(
+        .maxObjectPerLine(32), 
+        .OAMMaxObjects(256)
+        ) prepare_line (
+        .clk                    (clk_pix),
+        .reset                  (!btn_rst),
+        .oam_data               (oam_read_data),
+        .sx                     (sx),
+        .sy                     (sy),
+        .oam_addr               (oam_read_address),
+        .BufferArray    (LineObjectArray),
+        .line_prepeared (prepare_line_done)
+    );
+
+    logic [7:0] LineBuffer_next_line    [CORDW-1:0];
+    logic [7:0] LineBuffer_current_line [CORDW-1:0];
+    always_ff @(posedge clk_pix) begin
+        if (last_y != sy) begin
+            LineBuffer_current_line <= LineBuffer_next_line;
+        end
+        last_y <= sy;
+    end
+
+    /*
     ram_16x12d_infer u_ram_16x12d_infer (
         .data_out         (data_out),
         .write_enable     (write_enable),
@@ -74,10 +182,11 @@ module display_driver (
         .write_address    (write_address),
         .clk              (clk_pix)
     );
+    */
 
     //logic [11:0] addr_counter;
     //assign write_address = addr_counter; 
-    assign read_address = {sx[9:5],sy[9:5]};
+    //assign read_address = {sx[9:5],sy[9:5]};
     
     /*
     assign write_enable = 1;
@@ -95,10 +204,16 @@ module display_driver (
     logic animate;  // high for one clock tick at start of blanking
     always_comb animate = (sy == 480 && sx == 0);
 
+    assign palette_read_addr = !de ? 8'h0 : LineBuffer_current_line[sx_next];
+    // LineBuffer_current_line[sx] 8 bit number
+    // 
+    //wire[8:0] palette_read_addr;
+    //wire[23:0] palette_read_data;
+
     // VGA output
     always_comb begin
-        vga_r = !de ? 4'h0 : data_out[11:8];
-        vga_g = !de ? 4'h0 : data_out[7:4];
-        vga_b = !de ? 4'h0 : data_out[3:0];
+        vga_r = !de ? 4'h0 : palette_read_data[23:20];
+        vga_g = !de ? 4'h0 : palette_read_data[15:11];
+        vga_b = !de ? 4'h0 : palette_read_data[7:4];
     end
 endmodule

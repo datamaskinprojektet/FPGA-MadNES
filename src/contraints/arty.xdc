@@ -18,10 +18,10 @@ set_property -dict {PACKAGE_PIN C2 IOSTANDARD LVCMOS33} [get_ports {btn_rst}];
 #set_property -dict { PACKAGE_PIN B11   IOSTANDARD LVCMOS33 } [get_ports { EBI_CS }]; #IO_L4P_T0_15 Sch=ja[2]
 #set_property -dict { PACKAGE_PIN A11   IOSTANDARD LVCMOS33 } [get_ports { EBI_RE }]; #IO_L4N_T0_15 Sch=ja[3]
 #set_property -dict { PACKAGE_PIN D12   IOSTANDARD LVCMOS33 } [get_ports { EBI_WE }]; #IO_L6P_T0_15 Sch=ja[4]
-#set_property -dict { PACKAGE_PIN D13   IOSTANDARD LVCMOS33 } [get_ports { ja[4] }]; #IO_L6N_T0_VREF_15 Sch=ja[7]
-#set_property -dict { PACKAGE_PIN B18   IOSTANDARD LVCMOS33 } [get_ports { ja[5] }]; #IO_L10P_T1_AD11P_15 Sch=ja[8]
-#set_property -dict { PACKAGE_PIN A18   IOSTANDARD LVCMOS33 } [get_ports { ja[6] }]; #IO_L10N_T1_AD11N_15 Sch=ja[9]
-#set_property -dict { PACKAGE_PIN K16   IOSTANDARD LVCMOS33 } [get_ports { ja[7] }]; #IO_25_15 Sch=ja[10]
+set_property -dict { PACKAGE_PIN D13   IOSTANDARD LVCMOS33 } [get_ports { bank_select[0] }]; #IO_L6N_T0_VREF_15 Sch=ja[7]
+set_property -dict { PACKAGE_PIN B18   IOSTANDARD LVCMOS33 } [get_ports { bank_select[1] }]; #IO_L10P_T1_AD11P_15 Sch=ja[8]
+set_property -dict { PACKAGE_PIN A18   IOSTANDARD LVCMOS33 } [get_ports { bank_select[2] }]; #IO_L10N_T1_AD11N_15 Sch=ja[9]
+set_property -dict { PACKAGE_PIN K16   IOSTANDARD LVCMOS33 } [get_ports { bank_select[3] }]; #IO_25_15 Sch=ja[10]
 
 ## VGA Pmod on Header JB/JC
 set_property -dict {PACKAGE_PIN U14 IOSTANDARD LVCMOS33} [get_ports {vga_hsync}];
@@ -42,7 +42,7 @@ set_property -dict {PACKAGE_PIN J15 IOSTANDARD LVCMOS33} [get_ports {vga_b[3]}];
 
 ## Pmod Header JD
 #set_property -dict { PACKAGE_PIN D4    IOSTANDARD LVCMOS33 } [get_ports { EBI_ALE }]; #IO_L11N_T1_SRCC_35 Sch=jd[1]
-set_property -dict { PACKAGE_PIN D3    IOSTANDARD LVCMOS33 } [get_ports { EBI_CS }]; #IO_L12N_T1_MRCC_35 Sch=jd[2]
+#set_property -dict { PACKAGE_PIN D3    IOSTANDARD LVCMOS33 } [get_ports { EBI_CS }]; #IO_L12N_T1_MRCC_35 Sch=jd[2]
 set_property -dict { PACKAGE_PIN F4    IOSTANDARD LVCMOS33 } [get_ports { EBI_WE }]; #IO_L13P_T2_MRCC_35 Sch=jd[3]
 set_property -dict { PACKAGE_PIN F3    IOSTANDARD LVCMOS33 } [get_ports { EBI_RE }]; #IO_L13N_T2_MRCC_35 Sch=jd[4]
 set_property -dict { PACKAGE_PIN E2    IOSTANDARD LVCMOS33 } [get_ports { EBI_ALE }]; #IO_L14P_T2_SRCC_35 Sch=jd[7]

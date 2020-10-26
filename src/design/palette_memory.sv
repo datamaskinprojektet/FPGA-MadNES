@@ -17,7 +17,7 @@ reg[23:0] PALETTE_RAM[255:0];
 
 reg[15:0] RGBuffer;
 
-always_ff @(posedge clk, posedge rst) begin
+always_ff @(posedge clk) begin
     
     if(write_enable && write_addr[0] == 0) begin
         RGBuffer <= write_data ;

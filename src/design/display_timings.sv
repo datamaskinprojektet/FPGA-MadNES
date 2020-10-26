@@ -9,6 +9,7 @@ module display_timings (
     input  wire logic clk_pix,          // pixel clock
     input  wire logic rst,              // reset
     output      logic [9:0] sx,         // horizontal screen position
+    output      logic [9:0] sx_next,    // horizontal screen position next
     output      logic [9:0] sy,         // vertical screen position
     output      logic hsync,            // horizontal sync
     output      logic vsync,            // vertical sync
@@ -40,6 +41,11 @@ module display_timings (
             sy <= (sy == SCREEN) ? 0 : sy + 1;  // last line on screen?
         end else begin
             sx <= sx + 1;
+        end
+        if (sx == LINE - 1) begin 
+            sx_next <= 0;
+        end else begin
+            sx_next <= sx_next + 1;
         end
         if (rst) begin
             sx <= 0;

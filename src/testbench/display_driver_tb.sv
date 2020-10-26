@@ -28,7 +28,6 @@ module display_driver_tb();
     logic EBI_CS;
     logic EBI_RE;
     logic EBI_WE;
-    logic EBI_ALE;
     logic reset;
 
     logic vga_hsync;  
