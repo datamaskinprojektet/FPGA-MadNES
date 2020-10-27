@@ -25,15 +25,20 @@ Selecting a memory module is done by sending a Bank ID through the EBI\_CS pins.
 
 ### Write Operations
 Color n starts at write address 2n.
+
 Writing a full RGB triplet requires first writing the 16 bits for Red-Green followed by another write for Blue.
 
 #### Example Write
 Writing color #AABBCC to palette index 27.
+
 First write address: 27\*2 = 54
+
 Write @ 54: 0xAABB
 
 Second write address: 27\*2 + 1 = 55
+
 Write @ 55: 0x00CC
+
 
 The memory module buffers the RG-pair and concatenates it with the second write.
 
@@ -57,6 +62,7 @@ Palette memory does not support fully serial writing at 16-bits per write. Every
 
 ### Write Operations
 OAM Entry _n_ lies at write address 2*n*.
+
 An OAM entry spans 32 bits.
 
 Always write to an even-numbered location followed by its successor.
