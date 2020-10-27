@@ -66,7 +66,7 @@ end
 //end
 
 always_comb begin
-    read_data = { OAM_RAM[(read_addr << 1) + 1], OAM_RAM[read_addr << 1] };
+    read_data = { OAM_RAM[read_addr << 1], OAM_RAM[(read_addr << 1) + 1] };
 end
 
 endmodule

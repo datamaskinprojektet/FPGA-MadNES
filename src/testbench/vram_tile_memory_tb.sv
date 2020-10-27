@@ -37,7 +37,7 @@ module vram_tile_memory_tb(
         for(int i = 0; i < 32768; i++) begin
             #40
             write_addr += 1;
-            write_data = $urandom%255;
+            write_data = $urandom%65535;
         end
 
         #20
