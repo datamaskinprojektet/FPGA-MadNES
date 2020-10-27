@@ -99,7 +99,7 @@ set_property -name "platform.board_id" -value "arty" -objects $obj
 set_property -name "sim.central_dir" -value "$proj_dir/${_xil_proj_name_}.ip_user_files" -objects $obj
 set_property -name "sim.ip.auto_export_scripts" -value "1" -objects $obj
 set_property -name "simulator_language" -value "Mixed" -objects $obj
-set_property -name "webtalk.xsim_launch_sim" -value "114" -objects $obj
+set_property -name "webtalk.xsim_launch_sim" -value "157" -objects $obj
 
 # Create 'sources_1' fileset (if not found)
 if {[string equal [get_filesets -quiet sources_1] ""]} {
@@ -198,6 +198,7 @@ set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
 # Set 'sources_1' fileset properties
 set obj [get_filesets sources_1]
 set_property -name "top" -value "display_driver" -objects $obj
+set_property -name "top_auto_set" -value "0" -objects $obj
 
 # Create 'constrs_1' fileset (if not found)
 if {[string equal [get_filesets -quiet constrs_1] ""]} {
@@ -226,6 +227,8 @@ if {[string equal [get_filesets -quiet sim_1] ""]} {
 # Set 'sim_1' fileset object
 set obj [get_filesets sim_1]
 set files [list \
+ [file normalize "${origin_dir}/src/testbench/vram_tile_memory_tb.sv"] \
+ [file normalize "${origin_dir}/src/testbench/vram_sprite_memory_tb.sv"] \
  [file normalize "${origin_dir}/src/testbench/prepare_line_tb.sv"] \
  [file normalize "${origin_dir}/src/testbench/linedraw_tb.sv"] \
  [file normalize "${origin_dir}/src/testbench/display_timings_tb.sv"] \
@@ -239,6 +242,16 @@ set files [list \
 add_files -norecurse -fileset $obj $files
 
 # Set 'sim_1' fileset file properties for remote files
+set file "$origin_dir/src/testbench/vram_tile_memory_tb.sv"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sim_1] [list "*$file"]]
+set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
+
+set file "$origin_dir/src/testbench/vram_sprite_memory_tb.sv"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sim_1] [list "*$file"]]
+set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
+
 set file "$origin_dir/src/testbench/prepare_line_tb.sv"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sim_1] [list "*$file"]]
@@ -291,7 +304,7 @@ set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
 # Set 'sim_1' fileset properties
 set obj [get_filesets sim_1]
 set_property -name "hbs.configure_design_for_hier_access" -value "1" -objects $obj
-set_property -name "top" -value "prepare_line_tb" -objects $obj
+set_property -name "top" -value "vram_tile_memory_tb" -objects $obj
 set_property -name "top_auto_set" -value "0" -objects $obj
 set_property -name "top_lib" -value "xil_defaultlib" -objects $obj
 
@@ -322,7 +335,6 @@ if { $obj != "" } {
 
 }
 set obj [get_runs synth_1]
-set_property -name "needs_refresh" -value "1" -objects $obj
 set_property -name "strategy" -value "Vivado Synthesis Defaults" -objects $obj
 
 # set the current synth run

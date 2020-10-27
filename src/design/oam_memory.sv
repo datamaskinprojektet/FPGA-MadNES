@@ -20,7 +20,7 @@ reg[1:0] write_count;
 reg[15:0] buffer_input;
 reg[31:0] write_data_total;
 
-logic [31:0] write_data_combine;
+//logic [31:0] write_data_combine;
    
 // Vivado-specific inference
 (* RAM_STYLE="BLOCK" *)
