@@ -3,8 +3,8 @@
 module vram_tile_memory(
 
     input wire clk,              // Clock to drive the RAM module
-    input wire[11:0]  read_addr,  // 5 bits to address 64 locations
-    input wire[14:0]  write_addr, // 6 bits to address 128 locations
+    input wire[11:0]  read_addr,
+    input wire[14:0]  write_addr,
     input wire[15:0] write_data,
     input wire  write_enable,
 
@@ -24,7 +24,7 @@ assign actual_read_addr = read_addr << 4;
 
 
     always_comb begin
-        read_data = { 
+        read_data = {
             TILE_RAM[actual_read_addr],
             TILE_RAM[actual_read_addr+1],
             TILE_RAM[actual_read_addr+2],

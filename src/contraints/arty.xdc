@@ -13,14 +13,21 @@ create_clock -name clk_100m -period 10.00 [get_ports {clk_100m}];
 ## Buttons
 set_property -dict {PACKAGE_PIN C2 IOSTANDARD LVCMOS33} [get_ports {btn_rst}];
 
+# Chip Select Signals
+set_property -dict {PACKAGE_PIN C8 IOSTANDARD LVCMOS33  }  [ get_ports {bank_select[0]}]; # IO_L1P_T0_AD0P_15
+set_property -dict {PACKAGE_PIN B11 IOSTANDARD LVCMOS33 }  [ get_ports {bank_select[1]}]; # IO_L4N_T0_15
+set_property -dict {PACKAGE_PIN A8 IOSTANDARD LVCMOS33  }  [ get_ports {bank_select[2]}]; # IO_L2P_T0_AD0N_15
+set_property -dict {PACKAGE_PIN A14 IOSTANDARD LVCMOS33 }  [ get_ports {bank_select[3]}]; # IO_L7N_T1_AD2N_15
+
+
 ## Pmod Header JA
 #set_property -dict { PACKAGE_PIN G13   IOSTANDARD LVCMOS33 } [get_ports { EBI_ALE }]; #IO_0_15 Sch=ja[1]
 #set_property -dict { PACKAGE_PIN B11   IOSTANDARD LVCMOS33 } [get_ports { EBI_CS }]; #IO_L4P_T0_15 Sch=ja[2]
 #set_property -dict { PACKAGE_PIN A11   IOSTANDARD LVCMOS33 } [get_ports { EBI_RE }]; #IO_L4N_T0_15 Sch=ja[3]
 #set_property -dict { PACKAGE_PIN D12   IOSTANDARD LVCMOS33 } [get_ports { EBI_WE }]; #IO_L6P_T0_15 Sch=ja[4]
-set_property -dict { PACKAGE_PIN D13   IOSTANDARD LVCMOS33 } [get_ports { bank_select[0] }]; #IO_L6N_T0_VREF_15 Sch=ja[7]
-set_property -dict { PACKAGE_PIN B18   IOSTANDARD LVCMOS33 } [get_ports { bank_select[1] }]; #IO_L10P_T1_AD11P_15 Sch=ja[8]
-set_property -dict { PACKAGE_PIN A18   IOSTANDARD LVCMOS33 } [get_ports { bank_select[2] }]; #IO_L10N_T1_AD11N_15 Sch=ja[9]
+#set_property -dict { PACKAGE_PIN D13   IOSTANDARD LVCMOS33 } [get_ports { bank_select[0] }]; #IO_L6N_T0_VREF_15 Sch=ja[7]
+#set_property -dict { PACKAGE_PIN B18   IOSTANDARD LVCMOS33 } [get_ports { bank_select[1] }]; #IO_L10P_T1_AD11P_15 Sch=ja[8]
+#set_property -dict { PACKAGE_PIN A18   IOSTANDARD LVCMOS33 } [get_ports { bank_select[2] }]; #IO_L10N_T1_AD11N_15 Sch=ja[9]
 #set_property -dict { PACKAGE_PIN K16   IOSTANDARD LVCMOS33 } [get_ports { bank_select[3] }]; #IO_25_15 Sch=ja[10]
 
 ## VGA Pmod on Header JB/JC
