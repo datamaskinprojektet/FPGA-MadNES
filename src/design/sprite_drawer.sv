@@ -84,22 +84,23 @@ assign object_enable    = object[31];
 logic [15:0][7:0] sprite_line;
 
 always_comb begin
-    priority_d <= priority_q;
+    priority_d = priority_q;
     
     if(enable) begin
-        oam_a <= object_address;
-        vram_a <= {object_spriteref, 4'b0};
-        array_index_d <= array_index_q + 1;
-        sprite_line <= vram_d;
-        last_object_is_fetched <= (~object_exists) | (array_index_q >= SECOND_ARRAY_SIZE-1);
+        oam_a = object_address;
+        vram_a = {object_spriteref, 4'b0};
+        array_index_d = array_index_q + 1;
+        sprite_line = vram_d;
+        last_object_is_fetched = (~object_exists) | (array_index_q >= SECOND_ARRAY_SIZE-1);
     end else begin
-        priority_d <= 0;
-        array_index_d <= 0;
-        sprite_line <= 0;
-        last_object_is_fetched <= 0;
+        priority_d = 0;
+        array_index_d = 0;
+        sprite_line = 0;
+        last_object_is_fetched = 0;
         // shared busses must be undriven when module is disabled
-        oam_a <= 'bz;
-        vram_a <= 'bz;
+        // actually not that important. Muxing of the bus happens outside anyway
+        oam_a = 'bz;
+        vram_a = 'bz;
     end
 end
 

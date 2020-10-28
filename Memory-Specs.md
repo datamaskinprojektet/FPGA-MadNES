@@ -31,6 +31,7 @@ Writing a full RGB triplet requires first writing the 16 bits for Red-Green foll
 #### Example Write
 Writing color #AABBCC to palette index 27.
 
+
 First write address: 27\*2 = 54
 
 Write @ 54: 0xAABB
@@ -38,7 +39,6 @@ Write @ 54: 0xAABB
 Second write address: 27\*2 + 1 = 55
 
 Write @ 55: 0x00CC
-
 
 The memory module buffers the RG-pair and concatenates it with the second write.
 
@@ -49,7 +49,9 @@ Palette memory does not support fully serial writing at 16-bits per write. Every
 
 
 ## Object Attribute Memory (OAM)
+
 | Description           | Value     |
+
 | :------------------   | :-------- |
 | Read Address Width    | 6 bits    |
 | Write Address Width   | 7 bits    |
@@ -67,6 +69,7 @@ An OAM entry spans 32 bits.
 
 Always write to an even-numbered location followed by its successor.
 
+
 ## Tile Attribute Memory (TAM)
 
 | Description           | Value     |
@@ -79,10 +82,11 @@ Always write to an even-numbered location followed by its successor.
 | Write Enable Required | Yes       |
 | Read Enable Required  | No        |
 
+
 Memory layout: 1200 consequent 16-bit entries.
 
 ## Sprite Memory 
-| Description           | Value     |
+| Description           | Value     | 
 | :------------------   | :-------- |
 | Read Address Width    | 12 bits   |
 | Write Address Width   | 15 bits   |
