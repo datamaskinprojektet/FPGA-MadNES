@@ -54,7 +54,8 @@ module prepare_line(clk, reset, oam_data, sx, sy, oam_addr, BufferArray, line_pr
     logic should_write;
 
     // Counters
-    int oam_index_d, oam_index_q, buffer_array_index_d, buffer_array_index_q;
+    logic [OAM_ADDR_SIZE-1:0] oam_index_d, oam_index_q;
+    int buffer_array_index_d, buffer_array_index_q;
 
     // Object memory
     logic [OAM_ADDR_SIZE-1:0] oam_index_d, oam_index_q;
@@ -80,7 +81,7 @@ module prepare_line(clk, reset, oam_data, sx, sy, oam_addr, BufferArray, line_pr
         sprite_line = sy - object_ypos;
         sprite_is_on_line = (sprite_line >= 0 && sprite_line < 16);
 
-        buffer_array_element_d <= {oam_addr, 1};
+        buffer_array_element_d = {oam_index_q, 1'b1};
         oam_index_d = oam_index_q + sprite_is_on_line;
 
         // Counters
@@ -93,7 +94,7 @@ module prepare_line(clk, reset, oam_data, sx, sy, oam_addr, BufferArray, line_pr
                 buffer_array_index_d = buffer_array_index_q;
             end else begin
                 oam_index_d = oam_index_q + 1;
-                buffer_array_index_d = buffer_array_index_q + 1;
+                buffer_array_index_d = buffer_array_index_q + sprite_is_on_line;
             end
         end
 
@@ -101,7 +102,7 @@ module prepare_line(clk, reset, oam_data, sx, sy, oam_addr, BufferArray, line_pr
         sy_changed = last_sy != sy;
         line_prepared_d = ((buffer_array_index_q >= maxObjectPerLine - 1) || (oam_index_q >= OAMMaxObjects - 1))  &&  ~sy_changed;
         should_write = sprite_is_on_line && ~line_prepared_q;
-        
+
         // Output
         line_prepeared = line_prepared_q;
         BufferArray = buffer_array_q;
@@ -116,12 +117,12 @@ module prepare_line(clk, reset, oam_data, sx, sy, oam_addr, BufferArray, line_pr
             line_prepared_q <= 0;
         end else begin
             oam_index_q <= oam_index_d;
-            buffer_array_index_q <= buffer_array_index_d;
             if (should_write) begin
-                buffer_array_q[buffer_array_index_d] <= buffer_array_element_d;
+                buffer_array_q[buffer_array_index_q] <= buffer_array_element_d;
             end else if (sy_changed) begin
                 buffer_array_q <= 0;
             end
+            buffer_array_index_q <= buffer_array_index_d;
             last_sy <= sy;
             line_prepared_q <= line_prepared_d;
         end

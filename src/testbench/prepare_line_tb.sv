@@ -22,30 +22,35 @@
 
 module prepare_line_tb();
 
+    parameter int maxObjectPerLine = 32;
+    parameter int OAM_ADDR_SIZE = 6;
+    parameter int OAM_MAX_OBJECTS = 256;
+
     logic           reset;
     logic           clk;
     logic [31:0]    oam_data;
     logic [9:0]     sx;
     logic [9:0]     sy; 
     logic [5:0]    oam_addr;
-    logic  [32 - 1 : 0][8:0] BufferArray;
+    wire  [maxObjectPerLine - 1 : 0][OAM_ADDR_SIZE:0] BufferArray;
     logic line_prepeared;
 
     // Testbench parameters
     logic [64:0] clk_count;
-    logic [32 - 1 : 0][8:0] BufferArrayCheck;
+    logic [maxObjectPerLine - 1 : 0][OAM_ADDR_SIZE:0] BufferArrayCheck;
     logic [64:0] bufferIncrement;
 
     prepare_line #(
-        .maxObjectPerLine(32), 
-        .OAMMaxObjects(256)
+        .maxObjectPerLine(maxObjectPerLine), 
+        .OAMMaxObjects(256),
+        .OAM_ADDR_SIZE(OAM_ADDR_SIZE)
         ) u_prepare_line (
-        .clk                    (clk),
-        .reset                  (reset),
-        .oam_data               (oam_data),
-        .sx                     (sx),
-        .sy                     (sy),
-        .oam_addr               (oam_addr),
+        .clk            (clk),
+        .reset          (reset),
+        .oam_data       (oam_data),
+        .sx             (sx),
+        .sy             (sy),
+        .oam_addr       (oam_addr),
         .BufferArray    (BufferArray),
         .line_prepeared (line_prepeared)
     );
@@ -70,10 +75,13 @@ module prepare_line_tb();
         begin
             // Wait on signal
             @(posedge line_prepeared);
+            #0.1;
             $display("%t : posedge line_prepeared", $time);
             $display("Used %d on %d objects", clk_count, u_prepare_line.OAMMaxObjects);
-            bufferArrayEmpty: assert (BufferArray === BufferArrayCheck)
-                else $error("Assertion bufferArrayEmpty failed!");
+            for (int i=0; i<maxObjectPerLine; i++) begin
+                bufferArrayEmpty: assert (BufferArray[i] == BufferArrayCheck[i])
+                    else $error("Assertion bufferArrayEmpty[%d] failed!\nBuffer=%d, Check=%d", i, BufferArray[i], BufferArrayCheck[i]);
+            end
             disable f;
         end
     join
@@ -93,9 +101,10 @@ module prepare_line_tb();
         begin
             // Wait on signal
             @(posedge line_prepeared);
+            #0.1;
             $display("%t : posedge line_prepeared", $time);
             $display("Used %d on %d objects", clk_count, u_prepare_line.OAMMaxObjects);
-            bufferArrayEmpty: assert (BufferArray === BufferArrayCheck)
+            bufferArrayEmpty: assert (BufferArray == BufferArrayCheck)
                 else $error("Assertion bufferArrayEmpty failed!");
             disable f;
         end
@@ -103,9 +112,6 @@ module prepare_line_tb();
     endtask
 
     task resetModule();
-        foreach ( BufferArray[i] ) begin
-            BufferArray[i] = 0;
-        end
         reset = 1;
         clk = 1;
         sx = 0;
@@ -121,10 +127,15 @@ module prepare_line_tb();
     $display("prepare_line Unit Test");
     $display("prepare_line Testing empty buffer array");
     foreach (BufferArrayCheck[i]) begin
-        BufferArrayCheck[i] = 0;
+        BufferArrayCheck[i] = {
+            i,
+            1'b1
+        };
     end
     test_empty_buffer_array();
     $display("prepare_line Testing empty buffer array Done");
+
+    #4;
 
     resetModule();
     $display("prepare_line Testing full buffer array");
@@ -132,30 +143,13 @@ module prepare_line_tb();
     oam_data[31] = 1;
 
     for (int i = 0; i<$size(BufferArrayCheck); i++) begin
-        BufferArrayCheck[i][0:0] = 1;
-        BufferArrayCheck[i][8:1] = bufferIncrement;
+        BufferArrayCheck[i][0] = 1'b1;
+        BufferArrayCheck[i][OAM_ADDR_SIZE:1] = bufferIncrement;
         bufferIncrement++;
     end
 
     test_full_buffer_array();
     $display("prepare_line Testing full buffer array Done");
-    /*
-    oam_data[31] = 0;
-    #2;
-    reset = 0;
-    #10;
-
-    //sy = 15;
-    #50;
-    sy = 16;
-    #5;
-    //sy = 17;
-    #5;
-    //sy = 18;
-    #50;
-    sy = 15;
-    #100;
-    */
     $finish;
         
     end
