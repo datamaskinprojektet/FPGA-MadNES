@@ -58,7 +58,6 @@ module prepare_line(clk, reset, oam_data, sx, sy, oam_addr, BufferArray, line_pr
     int buffer_array_index_d, buffer_array_index_q;
 
     // Object memory
-    logic [OAM_ADDR_SIZE-1:0] oam_index_d, oam_index_q;
     logic [31:0] object;
     int object_ypos;
     assign object_ypos = object[27:18];
