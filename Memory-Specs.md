@@ -79,6 +79,8 @@ Always write to an even-numbered location followed by its successor.
 | Write Enable Required | Yes       |
 | Read Enable Required  | No        |
 
+Memory layout: 1200 consequent 16-bit entries.
+
 ## Sprite Memory 
 | Description           | Value     |
 | :------------------   | :-------- |
