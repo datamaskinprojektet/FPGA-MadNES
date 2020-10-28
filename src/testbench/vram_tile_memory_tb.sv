@@ -12,7 +12,6 @@ module vram_tile_memory_tb(
 
 
     vram_tile_memory TILE(
-        
     .clk(clk),              // Clock to drive the RAM module
     .read_addr(read_addr),  // 12 bits to address 2048 sprite lines
     .write_addr(write_addr), // 15 bits to address 32768 pixel pairs
@@ -21,7 +20,6 @@ module vram_tile_memory_tb(
 
     .read_data(read_data)
     );
-    
 
     initial begin
         clk = 0;
@@ -42,6 +40,10 @@ module vram_tile_memory_tb(
 
         #20
         write_enable = 0;
+        read_addr = 1;
+
+        #40
+        read_addr = 2;
     end
 
     always #20 clk = ~clk;
