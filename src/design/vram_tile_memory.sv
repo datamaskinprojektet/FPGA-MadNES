@@ -11,7 +11,7 @@ module vram_tile_memory(
     output reg [255:0] read_data
 );
 
-reg [15:0] TILE_RAM[32767:0];
+reg [15:0] TILE_RAM [32767:0];
 
 logic[14:0] actual_read_addr;
 assign actual_read_addr = read_addr << 4;

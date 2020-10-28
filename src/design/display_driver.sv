@@ -1,4 +1,3 @@
-`default_nettype none
 `timescale 1ns / 1ps
 
 module display_driver (
@@ -83,12 +82,12 @@ module display_driver (
     wire [31:0] oam_read_data;
 
     oam_memory OAM(
-        .clk(clk_pix),              // Clock to drive the RAM module
-        .reset(!btn_rst),
-        .read_addr(oam_read_address),  // 5 bits to address 64 locations
-        .write_addr(mcu_write_address[6:0]), // 6 bits to address 128 locations
-        .write_data(mcu_write_data),
-        .write_enable(write_enable_oam),
+        .clk          (clk_pix),                // Clock to drive the RAM module
+        .reset        (!btn_rst),
+        .read_addr    (oam_read_address),       // 5 bits to address 64 locations
+        .write_addr   (mcu_write_address[6:0]), // 6 bits to address 128 locations
+        .write_data   (mcu_write_data),
+        .write_enable (write_enable_oam),
 
         .read_data(oam_read_data)
     );
@@ -110,7 +109,7 @@ module display_driver (
     wire[11:0] sprite_read_address;
     wire[127:0] sprite_read_data;
 
-    vram_sprite_memory SPRITE(
+    vram_16b_x_8_x_4096 SPRITE(
         .clk(clk_pix),              // Clock to drive the RAM module
         .read_addr(sprite_read_address),  // 5 bits to address 64 locations
         .write_addr(mcu_write_address[14:0]), // 6 bits to address 128 locations
@@ -123,44 +122,42 @@ module display_driver (
     wire[11:0] tile_read_address;
     wire[127:0] tile_read_data;
 
-    vram_tile_memory TILE(
-        .clk(clk_pix),              // Clock to drive the RAM module
-        .read_addr(tile_read_address),  // 5 bits to address 64 locations
-        .write_addr(mcu_write_address[14:0]), // 6 bits to address 128 locations
-        .write_data(mcu_write_data),
-        .write_enable(write_enable_vram_tile),
-
-        .read_data(tile_read_data)
+    vram_16b_x_8_x_4096 TILE(
+        .clk          (clk_pix),                 // Clock to drive the RAM module
+        .read_addr    (tile_read_address),       // 5 bits to address 64 locations
+        .write_addr   (mcu_write_address[14:0]), // 6 bits to address 128 locations
+        .write_data   (mcu_write_data),
+        .write_enable (write_enable_vram_tile),
+        .read_data    (tile_read_data)
     );
-    
 
     wire[8:0] palette_read_addr;
     wire[23:0] palette_read_data;
 
     palette_memory PALETTE(
-        .clk(clk_pix),                  // Clock to drive the RAM module
-        .read_addr(palette_read_addr),  // 9 bits to address 512 locations
-        .write_addr(mcu_write_address[7:0]), // 8 bits to address 256 locations
-        .write_data(mcu_write_data),
-        .write_enable(write_enable_palette),
-
-        .read_data(palette_read_data)   // One palette entry is 24 bits
+        .clk          (clk_pix),                // Clock to drive the RAM module
+        .read_addr    (palette_read_addr),      // 9 bits to address 512 locations
+        .write_addr   (mcu_write_address[7:0]), // 8 bits to address 256 locations
+        .write_data   (mcu_write_data),
+        .write_enable (write_enable_palette),
+        .read_data    (palette_read_data)       // One palette entry is 24 bits
     );
 
-    
     wire prepare_line_done;
     logic [32 - 1 : 0][8:0] LineObjectArray;
+    wire [5:0] oam_read_address_prepare_line, oam_read_address_draw_sprite;
+    assign oam_read_address = prepare_line_done ? oam_read_address_draw_sprite : oam_read_address_prepare_line;
     
     prepare_line #(
         .maxObjectPerLine(32), 
         .OAMMaxObjects(256)
-        ) prepare_line (
-        .clk                    (clk_pix),
-        .reset                  (!btn_rst),
-        .oam_data               (oam_read_data),
-        .sx                     (sx),
-        .sy                     (sy),
-        .oam_addr               (oam_read_address),
+    ) prepare_line (
+        .clk            (clk_pix),
+        .reset          (!btn_rst),
+        .oam_data       (oam_read_data),
+        .sx             (sx),
+        .sy             (sy),
+        .oam_addr       (oam_read_address_prepare_line),
         .BufferArray    (LineObjectArray),
         .line_prepeared (prepare_line_done)
     );
@@ -181,7 +178,7 @@ module display_driver (
         .rst(!btn_rst),
         .enable(prepare_line_done),
         .done(sprite_drawer_done),
-        .oam_a(oam_read_address),
+        .oam_a(oam_read_address_draw_sprite),
         .oam_d(oam_read_data),
         .vram_a(sprite_read_address),
         .vram_d(sprite_read_data),
