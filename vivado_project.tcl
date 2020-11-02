@@ -227,33 +227,17 @@ if {[string equal [get_filesets -quiet sim_1] ""]} {
 # Set 'sim_1' fileset object
 set obj [get_filesets sim_1]
 set files [list \
- [file normalize "${origin_dir}/src/testbench/prepare_line_tb.sv"] \
- [file normalize "${origin_dir}/src/testbench/sprite_drawer_tb.sv"] \
  [file normalize "${origin_dir}/src/testbench/display_timings_tb.sv"] \
  [file normalize "${origin_dir}/src/testbench/clock_gen_tb.sv"] \
  [file normalize "${origin_dir}/src/testbench/display_driver_tb.sv"] \
  [file normalize "${origin_dir}/src/testbench/ebi_interface_tb.sv"] \
  [file normalize "${origin_dir}/src/testbench/linedraw_tb.sv"] \
+ [file normalize "${origin_dir}/src/testbench/prepare_line_tb.sv"] \
+ [file normalize "${origin_dir}/src/testbench/sprite_drawer_tb.sv"] \
 ]
 add_files -norecurse -fileset $obj $files
 
-# Add local files from the original project (-no_copy_sources specified)
-set files [list \
- [file normalize "${origin_dir}/vivado_project/sprite_drawer_tb_behav.wcfg" ]\
-]
-set added_files [add_files -fileset sim_1 $files]
-
 # Set 'sim_1' fileset file properties for remote files
-set file "$origin_dir/src/testbench/prepare_line_tb.sv"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sim_1] [list "*$file"]]
-set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
-
-set file "$origin_dir/src/testbench/sprite_drawer_tb.sv"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sim_1] [list "*$file"]]
-set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
-
 set file "$origin_dir/src/testbench/display_timings_tb.sv"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sim_1] [list "*$file"]]
@@ -279,6 +263,16 @@ set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sim_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
 
+set file "$origin_dir/src/testbench/prepare_line_tb.sv"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sim_1] [list "*$file"]]
+set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
+
+set file "$origin_dir/src/testbench/sprite_drawer_tb.sv"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sim_1] [list "*$file"]]
+set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
+
 
 # Set 'sim_1' fileset file properties for local files
 # None
@@ -286,8 +280,7 @@ set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
 # Set 'sim_1' fileset properties
 set obj [get_filesets sim_1]
 set_property -name "hbs.configure_design_for_hier_access" -value "1" -objects $obj
-set_property -name "top" -value "prepare_line_tb" -objects $obj
-set_property -name "top_auto_set" -value "0" -objects $obj
+set_property -name "top" -value "display_timings_tb" -objects $obj
 set_property -name "top_lib" -value "xil_defaultlib" -objects $obj
 
 # Set 'utils_1' fileset object
@@ -318,7 +311,6 @@ if { $obj != "" } {
 }
 set obj [get_runs synth_1]
 set_property -name "strategy" -value "Vivado Synthesis Defaults" -objects $obj
-set_property -name "steps.synth_design.args.flatten_hierarchy" -value "none" -objects $obj
 
 # set the current synth run
 current_run -synthesis [get_runs synth_1]
