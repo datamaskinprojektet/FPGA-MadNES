@@ -17,7 +17,7 @@ generate;
         assign enable[i] = write_enable && (write_addr[2:0] == i);
         bram_16x4096 myram (
             .clk(clk),
-            .write_addr(write_addr[write_addr[14:3]]),
+            .write_addr(write_addr[14:3]),
             .write_data(write_data),
             .write_enable(enable[i]),
             .read_addr(read_addr),

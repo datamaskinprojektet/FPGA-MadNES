@@ -89,18 +89,18 @@ always_comb begin
     if(enable) begin
         oam_a = object_address;
         vram_a = {object_spriteref, 4'b0};
+        object = oam_d;
         array_index_d = array_index_q + 1;
         sprite_line = vram_d;
         last_object_is_fetched = (~object_exists) | (array_index_q >= SECOND_ARRAY_SIZE-1);
     end else begin
         priority_d = 0;
         array_index_d = 0;
+        object = 0;
         sprite_line = 0;
         last_object_is_fetched = 0;
-        // shared busses must be undriven when module is disabled
-        // actually not that important. Muxing of the bus happens outside anyway
-        oam_a = 'bz;
-        vram_a = 'bz;
+        oam_a = 0;
+        vram_a = 0;
     end
 end
 
@@ -108,13 +108,11 @@ always_ff @(posedge clk, posedge rst) begin
     if (rst) begin
         priority_q <= 0;
         array_index_q <= 0;
-        object <= 0;
         done <= 0;
         line_buffer <= 0;
     end else begin
         priority_q <= priority_d;
         array_index_q <= array_index_d;
-        object <= oam_d;
         done <= last_object_is_fetched;
         for (int i=0; i<16; i++) begin
             line_buffer[object_xpos+i] <= sprite_line[i];
