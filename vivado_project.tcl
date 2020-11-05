@@ -99,7 +99,7 @@ set_property -name "platform.board_id" -value "arty" -objects $obj
 set_property -name "sim.central_dir" -value "$proj_dir/${_xil_proj_name_}.ip_user_files" -objects $obj
 set_property -name "sim.ip.auto_export_scripts" -value "1" -objects $obj
 set_property -name "simulator_language" -value "Mixed" -objects $obj
-set_property -name "webtalk.xsim_launch_sim" -value "208" -objects $obj
+set_property -name "webtalk.xsim_launch_sim" -value "257" -objects $obj
 
 # Create 'sources_1' fileset (if not found)
 if {[string equal [get_filesets -quiet sources_1] ""]} {
@@ -109,6 +109,7 @@ if {[string equal [get_filesets -quiet sources_1] ""]} {
 # Set 'sources_1' fileset object
 set obj [get_filesets sources_1]
 set files [list \
+ [file normalize "${origin_dir}/src/design/bram_16x256.sv"] \
  [file normalize "${origin_dir}/src/design/bram_16x4096.sv"] \
  [file normalize "${origin_dir}/src/design/clock_gen.sv"] \
  [file normalize "${origin_dir}/src/design/display_timings.sv"] \
@@ -134,6 +135,11 @@ set files [list \
 set added_files [add_files -fileset sources_1 $files]
 
 # Set 'sources_1' fileset file properties for remote files
+set file "$origin_dir/src/design/bram_16x256.sv"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
+
 set file "$origin_dir/src/design/bram_16x4096.sv"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
@@ -248,13 +254,13 @@ if {[string equal [get_filesets -quiet sim_1] ""]} {
 # Set 'sim_1' fileset object
 set obj [get_filesets sim_1]
 set files [list \
+ [file normalize "${origin_dir}/src/testbench/ebi_interface_tb.sv"] \
  [file normalize "${origin_dir}/src/testbench/prepare_line_tb.sv"] \
  [file normalize "${origin_dir}/src/testbench/vram_memory_tb.sv"] \
  [file normalize "${origin_dir}/src/testbench/sprite_drawer_tb.sv"] \
  [file normalize "${origin_dir}/src/testbench/display_timings_tb.sv"] \
  [file normalize "${origin_dir}/src/testbench/clock_gen_tb.sv"] \
  [file normalize "${origin_dir}/src/testbench/display_driver_tb.sv"] \
- [file normalize "${origin_dir}/src/testbench/ebi_interface_tb.sv"] \
  [file normalize "${origin_dir}/src/testbench/linedraw_tb.sv"] \
  [file normalize "${origin_dir}/src/testbench/oam_memory_tb.sv"] \
  [file normalize "${origin_dir}/src/testbench/vram_tile_memory_tb.sv"] \
@@ -271,6 +277,11 @@ set files [list \
 set added_files [add_files -fileset sim_1 $files]
 
 # Set 'sim_1' fileset file properties for remote files
+set file "$origin_dir/src/testbench/ebi_interface_tb.sv"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sim_1] [list "*$file"]]
+set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
+
 set file "$origin_dir/src/testbench/prepare_line_tb.sv"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sim_1] [list "*$file"]]
@@ -297,11 +308,6 @@ set file_obj [get_files -of_objects [get_filesets sim_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
 
 set file "$origin_dir/src/testbench/display_driver_tb.sv"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sim_1] [list "*$file"]]
-set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
-
-set file "$origin_dir/src/testbench/ebi_interface_tb.sv"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sim_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
@@ -343,7 +349,7 @@ set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
 # Set 'sim_1' fileset properties
 set obj [get_filesets sim_1]
 set_property -name "hbs.configure_design_for_hier_access" -value "1" -objects $obj
-set_property -name "top" -value "prepare_line_tb" -objects $obj
+set_property -name "top" -value "ebi_interface_tb" -objects $obj
 set_property -name "top_auto_set" -value "0" -objects $obj
 set_property -name "top_lib" -value "xil_defaultlib" -objects $obj
 
@@ -374,7 +380,6 @@ if { $obj != "" } {
 
 }
 set obj [get_runs synth_1]
-set_property -name "needs_refresh" -value "1" -objects $obj
 set_property -name "strategy" -value "Vivado Synthesis Defaults" -objects $obj
 set_property -name "steps.synth_design.args.flatten_hierarchy" -value "none" -objects $obj
 
@@ -589,7 +594,6 @@ set_property -name "options.warn_on_violation" -value "1" -objects $obj
 
 }
 set obj [get_runs impl_1]
-set_property -name "needs_refresh" -value "1" -objects $obj
 set_property -name "strategy" -value "Vivado Implementation Defaults" -objects $obj
 set_property -name "steps.write_bitstream.args.readback_file" -value "0" -objects $obj
 set_property -name "steps.write_bitstream.args.verbose" -value "0" -objects $obj
