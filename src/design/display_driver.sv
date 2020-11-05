@@ -36,12 +36,12 @@ module display_driver (
     logic de;
     display_timings timings_640x480 (
         .clk_pix,
-        .rst(!clk_locked),  // wait for clock lock
-        .sx(sx),
-        .sy(sy),
-        .sx_next(sx_next),
-        .hsync(vga_hsync),
-        .vsync(vga_vsync),
+        .rst     ( !clk_locked ) ,  // wait for clock lock
+        .sx      ( sx          ) ,
+        .sy      ( sy          ) ,
+        .sx_next ( sx_next     ) ,
+        .hsync   ( vga_hsync   ) ,
+        .vsync   ( vga_vsync   ) ,
         .de
     );
 
@@ -50,7 +50,6 @@ module display_driver (
     logic [15:0] mcu_write_data;
     logic [15:0] mcu_write_address;
     logic write_enable;
-    logic data_ready;
 
     wire write_enable_oam;
     wire write_enable_vram_sprite;
@@ -58,11 +57,11 @@ module display_driver (
     wire write_enable_palette;
     wire write_enable_tam;
 
-    assign write_enable_oam =         (bank_select == 0) & write_enable;
+    assign write_enable_oam         = (bank_select == 0) & write_enable;
     assign write_enable_vram_sprite = (bank_select == 1) & write_enable;
-    assign write_enable_vram_tile =   (bank_select == 2) & write_enable;
-    assign write_enable_palette =     (bank_select == 3) & write_enable;
-    assign write_enable_tam =         (bank_select == 4) & write_enable;
+    assign write_enable_vram_tile   = (bank_select == 2) & write_enable;
+    assign write_enable_palette     = (bank_select == 3) & write_enable;
+    assign write_enable_tam         = (bank_select == 4) & write_enable;
 
 
     ebi_interface u_ebi_interface (
@@ -96,13 +95,13 @@ module display_driver (
     wire [9:0] tam_read_address;
 
     tam_memory TAM(
-        .clk(clk_pix),              // Clock to drive the RAM module
-        .read_addr(tam_read_address),  // 5 bits to address 64 locations
-        .write_addr(mcu_write_address[6:0]), // 6 bits to address 128 locations
-        .write_data(mcu_write_data),
-        .write_enable(write_enable_tam),
+        .clk          (clk_pix),           // Clock to drive the RAM module
+        .read_addr    (tam_read_address),  // 5 bits to address 64 locations
+        .write_addr   (mcu_write_address[6:0]), // 6 bits to address 128 locations
+        .write_data   (mcu_write_data),
+        .write_enable (write_enable_tam),
 
-        .read_data(tam_read_data)
+        .read_data    (tam_read_data)
 
     );
 
@@ -110,13 +109,13 @@ module display_driver (
     wire[127:0] sprite_read_data;
 
     vram_16b_x_8_x_4096 SPRITE(
-        .clk(clk_pix),              // Clock to drive the RAM module
-        .read_addr(sprite_read_address),  // 5 bits to address 64 locations
-        .write_addr(mcu_write_address[14:0]), // 6 bits to address 128 locations
-        .write_data(mcu_write_data),
-        .write_enable(write_enable_vram_sprite),
+        .clk          (clk_pix),              // Clock to drive the RAM module
+        .read_addr    (sprite_read_address),  // 5 bits to address 64 locations
+        .write_addr   (mcu_write_address[14:0]), // 6 bits to address 128 locations
+        .write_data   (mcu_write_data),
+        .write_enable (write_enable_vram_sprite),
 
-        .read_data(sprite_read_data)
+        .read_data    (sprite_read_data)
     );
 
     wire[11:0] tile_read_address;
@@ -174,17 +173,17 @@ module display_driver (
         .DISPLAY_HEIGHT       (480),
         .LINE_NUMBER_WIDTH    ($size(sy))
     ) u_sprite_drawer (
-        .clk(clk_pix),
-        .rst(!btn_rst),
-        .enable(prepare_line_done),
-        .done(sprite_drawer_done),
-        .oam_a(oam_read_address_draw_sprite),
-        .oam_d(oam_read_data),
-        .vram_a(sprite_read_address),
-        .vram_d(sprite_read_data),
-        .second_array(LineObjectArray),
-        .line_number(sy),
-        .line_buffer(LineBuffer_next_line)
+        .clk             (clk_pix),
+        .rst             (!btn_rst),
+        .enable          (prepare_line_done),
+        .done            (sprite_drawer_done),
+        .oam_a           (oam_read_address_draw_sprite),
+        .oam_d           (oam_read_data),
+        .vram_a          (sprite_read_address),
+        .vram_d          (sprite_read_data),
+        .second_array    (LineObjectArray),
+        .line_number     (sy),
+        .line_buffer     (LineBuffer_next_line)
     );
     
     logic [CORDW-1:0][7:0] LineBuffer_next_line;
@@ -197,6 +196,30 @@ module display_driver (
     end
 
     assign palette_read_addr = !de ? 8'h0 : LineBuffer_current_line[sx_next];
+
+
+    wtf_is_wrong ILA(
+        .clk     ( clk_pix                  ) ,
+        .probe0  ( palette_read_data[23:20] ) ,
+        .probe1  ( palette_read_data[15:11] ) ,
+        .probe2  ( palette_read_data[7:4]   ) ,
+        .probe3  ( sy                       ) ,
+        .probe4  ( last_y                   ) ,
+        .probe5  ( mcu_write_data           ) ,
+        .probe6  ( EBI_WE                   ) ,
+        .probe7  ( EBI_ALE                  ) ,
+        .probe8  ( write_enable_oam         ) ,
+        .probe9  ( write_enable_tam         ) ,
+        .probe10 ( write_enable_vram_sprite ) ,
+        .probe11 ( write_enable_vram_tile   ) ,
+        .probe12 ( write_enable_palette     ) ,
+        .probe13 ( mcu_write_address        ) ,
+        .probe14 ( EBI_AD                   ) ,
+        .probe15 ( bank_select[0]           ) ,
+        .probe16 ( bank_select[1]           ) ,
+        .probe17 ( bank_select[2]           ) ,
+        .probe18 ( write_enable             ) 
+    );
 
 
     // size of screen (excluding blanking)
