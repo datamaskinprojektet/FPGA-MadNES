@@ -18,10 +18,10 @@ generate;
         assign enable[i] = write_enable && (write_addr[0] == i);
         bram_16x256 myram (
             .clk(clk),
-            .write_addr(write_addr[6:1]),
+            .write_addr({2'b00,write_addr[6:1]}),
             .write_data(write_data),
             .write_enable(enable[i]),
-            .read_addr(read_addr),
+            .read_addr({2'b00,read_addr}),
             .read_data(read_data[16*i+15 -: 16])
         );
     end
