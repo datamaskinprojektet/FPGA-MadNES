@@ -99,7 +99,15 @@ set_property -name "platform.board_id" -value "arty" -objects $obj
 set_property -name "sim.central_dir" -value "$proj_dir/${_xil_proj_name_}.ip_user_files" -objects $obj
 set_property -name "sim.ip.auto_export_scripts" -value "1" -objects $obj
 set_property -name "simulator_language" -value "Mixed" -objects $obj
-set_property -name "webtalk.xsim_launch_sim" -value "257" -objects $obj
+set_property -name "webtalk.activehdl_export_sim" -value "10" -objects $obj
+set_property -name "webtalk.ies_export_sim" -value "10" -objects $obj
+set_property -name "webtalk.modelsim_export_sim" -value "10" -objects $obj
+set_property -name "webtalk.questa_export_sim" -value "10" -objects $obj
+set_property -name "webtalk.riviera_export_sim" -value "10" -objects $obj
+set_property -name "webtalk.vcs_export_sim" -value "10" -objects $obj
+set_property -name "webtalk.xsim_export_sim" -value "10" -objects $obj
+set_property -name "webtalk.xsim_launch_sim" -value "287" -objects $obj
+set_property -name "xpm_libraries" -value "XPM_CDC XPM_MEMORY" -objects $obj
 
 # Create 'sources_1' fileset (if not found)
 if {[string equal [get_filesets -quiet sources_1] ""]} {
@@ -121,18 +129,13 @@ set files [list \
  [file normalize "${origin_dir}/src/design/tam_memory.sv"] \
  [file normalize "${origin_dir}/src/design/vram_sprite_memory.sv"] \
  [file normalize "${origin_dir}/src/design/display_driver.sv"] \
- [file normalize "${origin_dir}/src/design/vram_tile_memory.sv"] \
- [file normalize "${origin_dir}/src/design/simple_ram.sv"] \
- [file normalize "${origin_dir}/src/design/oam_registers.sv"] \
+ [file normalize "${origin_dir}/src/design/ebi_interface_alt.sv"] \
  [file normalize "${origin_dir}/src/design/control_registers.sv"] \
+ [file normalize "${origin_dir}/src/design/oam_registers.sv"] \
+ [file normalize "${origin_dir}/src/design/simple_ram.sv"] \
+ [file normalize "${origin_dir}/src/design/vram_tile_memory.sv"] \
 ]
 add_files -norecurse -fileset $obj $files
-
-# Add local files from the original project (-no_copy_sources specified)
-set files [list \
- [file normalize "${origin_dir}/vivado_project/vivado_project.srcs/sources_1/new/bram_16x4096.sv" ]\
-]
-set added_files [add_files -fileset sources_1 $files]
 
 # Set 'sources_1' fileset file properties for remote files
 set file "$origin_dir/src/design/bram_16x256.sv"
@@ -195,17 +198,7 @@ set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
 
-set file "$origin_dir/src/design/vram_tile_memory.sv"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
-
-set file "$origin_dir/src/design/simple_ram.sv"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
-
-set file "$origin_dir/src/design/oam_registers.sv"
+set file "$origin_dir/src/design/ebi_interface_alt.sv"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
@@ -215,17 +208,49 @@ set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
 
+set file "$origin_dir/src/design/oam_registers.sv"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
 
-# Set 'sources_1' fileset file properties for local files
-set file "new/bram_16x4096.sv"
+set file "$origin_dir/src/design/simple_ram.sv"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
+
+set file "$origin_dir/src/design/vram_tile_memory.sv"
+set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
 
 
+# Set 'sources_1' fileset file properties for local files
+# None
+
 # Set 'sources_1' fileset properties
 set obj [get_filesets sources_1]
 set_property -name "top" -value "display_driver" -objects $obj
-set_property -name "top_auto_set" -value "0" -objects $obj
+
+# Set 'sources_1' fileset object
+set obj [get_filesets sources_1]
+# Add local files from the original project (-no_copy_sources specified)
+set files [list \
+ [file normalize "${origin_dir}/vivado_project/vivado_project.srcs/sources_1/ip/wtf_is_wrong/wtf_is_wrong.xci" ]\
+]
+set added_files [add_files -fileset sources_1 $files]
+
+# Set 'sources_1' fileset file properties for remote files
+# None
+
+# Set 'sources_1' fileset file properties for local files
+set file "wtf_is_wrong/wtf_is_wrong.xci"
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property -name "generate_files_for_reference" -value "0" -objects $file_obj
+set_property -name "registered_with_manager" -value "1" -objects $file_obj
+if { ![get_property "is_locked" $file_obj] } {
+  set_property -name "synth_checkpoint_mode" -value "Singular" -objects $file_obj
+}
+
 
 # Create 'constrs_1' fileset (if not found)
 if {[string equal [get_filesets -quiet constrs_1] ""]} {
@@ -255,89 +280,11 @@ if {[string equal [get_filesets -quiet sim_1] ""]} {
 set obj [get_filesets sim_1]
 set files [list \
  [file normalize "${origin_dir}/src/testbench/ebi_interface_tb.sv"] \
- [file normalize "${origin_dir}/src/testbench/prepare_line_tb.sv"] \
- [file normalize "${origin_dir}/src/testbench/vram_memory_tb.sv"] \
- [file normalize "${origin_dir}/src/testbench/sprite_drawer_tb.sv"] \
- [file normalize "${origin_dir}/src/testbench/display_timings_tb.sv"] \
- [file normalize "${origin_dir}/src/testbench/clock_gen_tb.sv"] \
- [file normalize "${origin_dir}/src/testbench/display_driver_tb.sv"] \
- [file normalize "${origin_dir}/src/testbench/linedraw_tb.sv"] \
- [file normalize "${origin_dir}/src/testbench/oam_memory_tb.sv"] \
- [file normalize "${origin_dir}/src/testbench/vram_tile_memory_tb.sv"] \
- [file normalize "${origin_dir}/src/testbench/palette_mem_tb.sv"] \
- [file normalize "${origin_dir}/src/testbench/vram_sprite_memory_tb.sv"] \
- [file normalize "${origin_dir}/src/testbench/control_registers_tb.sv"] \
 ]
 add_files -norecurse -fileset $obj $files
 
-# Add local files from the original project (-no_copy_sources specified)
-set files [list \
- [file normalize "${origin_dir}/vivado_project/sprite_drawer_tb_behav.wcfg" ]\
-]
-set added_files [add_files -fileset sim_1 $files]
-
 # Set 'sim_1' fileset file properties for remote files
 set file "$origin_dir/src/testbench/ebi_interface_tb.sv"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sim_1] [list "*$file"]]
-set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
-
-set file "$origin_dir/src/testbench/prepare_line_tb.sv"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sim_1] [list "*$file"]]
-set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
-
-set file "$origin_dir/src/testbench/vram_memory_tb.sv"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sim_1] [list "*$file"]]
-set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
-
-set file "$origin_dir/src/testbench/sprite_drawer_tb.sv"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sim_1] [list "*$file"]]
-set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
-
-set file "$origin_dir/src/testbench/display_timings_tb.sv"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sim_1] [list "*$file"]]
-set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
-
-set file "$origin_dir/src/testbench/clock_gen_tb.sv"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sim_1] [list "*$file"]]
-set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
-
-set file "$origin_dir/src/testbench/display_driver_tb.sv"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sim_1] [list "*$file"]]
-set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
-
-set file "$origin_dir/src/testbench/linedraw_tb.sv"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sim_1] [list "*$file"]]
-set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
-
-set file "$origin_dir/src/testbench/oam_memory_tb.sv"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sim_1] [list "*$file"]]
-set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
-
-set file "$origin_dir/src/testbench/vram_tile_memory_tb.sv"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sim_1] [list "*$file"]]
-set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
-
-set file "$origin_dir/src/testbench/palette_mem_tb.sv"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sim_1] [list "*$file"]]
-set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
-
-set file "$origin_dir/src/testbench/vram_sprite_memory_tb.sv"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sim_1] [list "*$file"]]
-set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
-
-set file "$origin_dir/src/testbench/control_registers_tb.sv"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sim_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
@@ -380,8 +327,8 @@ if { $obj != "" } {
 
 }
 set obj [get_runs synth_1]
+set_property -name "needs_refresh" -value "1" -objects $obj
 set_property -name "strategy" -value "Vivado Synthesis Defaults" -objects $obj
-set_property -name "steps.synth_design.args.flatten_hierarchy" -value "none" -objects $obj
 
 # set the current synth run
 current_run -synthesis [get_runs synth_1]
@@ -594,6 +541,7 @@ set_property -name "options.warn_on_violation" -value "1" -objects $obj
 
 }
 set obj [get_runs impl_1]
+set_property -name "needs_refresh" -value "1" -objects $obj
 set_property -name "strategy" -value "Vivado Implementation Defaults" -objects $obj
 set_property -name "steps.write_bitstream.args.readback_file" -value "0" -objects $obj
 set_property -name "steps.write_bitstream.args.verbose" -value "0" -objects $obj

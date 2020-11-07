@@ -48,6 +48,7 @@ module prepare_line(clk, reset, oam_data, sx, sy, oam_addr, BufferArray, line_pr
     output logic [maxObjectPerLine - 1 : 0][OAM_ADDR_SIZE:0] BufferArray;
     output logic line_prepeared;
 
+
     // Control signals
     logic line_prepared_d, line_prepared_q;
     logic [9:0] last_sy;
@@ -94,7 +95,7 @@ module prepare_line(clk, reset, oam_data, sx, sy, oam_addr, BufferArray, line_pr
                 oam_index_d = oam_index_q;
                 buffer_array_index_d = buffer_array_index_q;
             end else begin
-                oam_index_d = oam_index_q + 1;
+                oam_index_d = oam_index_q + ~line_prepared_d;
                 buffer_array_index_d = buffer_array_index_q + should_write;
             end
         end
@@ -130,4 +131,21 @@ module prepare_line(clk, reset, oam_data, sx, sy, oam_addr, BufferArray, line_pr
             line_prepared_q <= line_prepared_d;
         end
     end
+  
+    wtf_is_wrong ILA(
+        .clk(clk),
+        .probe0(sy),
+        .probe1(oam_data),
+        .probe2(object_ypos),
+        .probe3(should_write),
+        .probe4(buffer_array_q[31:0]),
+        .probe5(buffer_array_element_d),
+        .probe6(oam_index_d),
+        .probe7(oam_index_q),
+        .probe8(object_enabled),
+        .probe9(sprite_is_on_line)
+
+
+    );
+
 endmodule

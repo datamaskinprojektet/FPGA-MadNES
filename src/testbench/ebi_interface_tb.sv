@@ -14,7 +14,7 @@ module ebi_interface_tb();
     logic [15:0] address_out;
     logic [15:0] data_out;
 
-    ebi_interface u_ebi_interface (
+    ebi_interface_alt u_ebi_interface (
         .reset       (reset),
         .EBI_AD      (EBI_AD),
         .EBI_ALE     (EBI_ALE),
@@ -35,6 +35,8 @@ module ebi_interface_tb();
         EBI_ALE = 1;
         EBI_WE = 1;
         EBI_RE = 1;
+
+        #2;
 
         #10;
         reset = 0;

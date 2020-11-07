@@ -6,17 +6,16 @@ module display_driver (
 
     // Input for EBI interface
     input       wire [15:0] EBI_AD,
-    input       wire EBI_ALE,
-    // input       wire EBI_CS, // DEPRECATED: Use bank_select instead
-    input       wire EBI_RE,
-    input       wire EBI_WE,
-    input       wire [2:0] bank_select, // TODO: Map pins in constraints file
+    input       wire        EBI_ALE,
+    input       wire        EBI_RE,
+    input       wire        EBI_WE,
+    input       wire [2:0] bank_select,   // TODO: Map pins in constraints file
 
-    output      logic vga_hsync,    // horizontal sync
-    output      logic vga_vsync,    // vertical sync
-    output      logic [3:0] vga_r,  // 4-bit VGA red
-    output      logic [3:0] vga_g,  // 4-bit VGA green
-    output      logic [3:0] vga_b   // 4-bit VGA blue
+    output      logic       vga_hsync,    // horizontal sync
+    output      logic       vga_vsync,    // vertical sync
+    output      logic [3:0] vga_r,        // 4-bit VGA red
+    output      logic [3:0] vga_g,        // 4-bit VGA green
+    output      logic [3:0] vga_b         // 4-bit VGA blue
     );
 
     
@@ -30,7 +29,7 @@ module display_driver (
        .clk_locked
     );
 
-    // display timings
+    // Display Timings
     localparam CORDW = 10;  // screen coordinate width in bits
     logic [CORDW-1:0] sx, sy, sx_next, last_y;
     logic de;
@@ -80,6 +79,8 @@ module display_driver (
     wire [5:0] oam_read_address;
     wire [31:0] oam_read_data;
 
+    //assign oam_read_address = 1;
+
     oam_memory OAM(
         .clk          (clk_pix),                // Clock to drive the RAM module
         .reset        (!btn_rst),
@@ -102,7 +103,6 @@ module display_driver (
         .write_enable (write_enable_tam),
 
         .read_data    (tam_read_data)
-
     );
 
     wire[11:0] sprite_read_address;
@@ -163,27 +163,27 @@ module display_driver (
 
     wire sprite_drawer_done;
     sprite_drawer #(
-        .VRAM_ADDR_SIZE       (12),
-        .VRAM_DATA_SIZE       (128),
-        .SECOND_ARRAY_SIZE    (32),
-        .OAM_ADDR_SIZE        (6),
-        .OAM_DATA_SIZE        (32),
-        .COLOR_DEPTH          (8),
-        .DISPLAY_WIDTH        (600),
-        .DISPLAY_HEIGHT       (480),
-        .LINE_NUMBER_WIDTH    ($size(sy))
+        .VRAM_ADDR_SIZE       ( 12        ) ,
+        .VRAM_DATA_SIZE       ( 128       ) ,
+        .SECOND_ARRAY_SIZE    ( 32        ) ,
+        .OAM_ADDR_SIZE        ( 6         ) ,
+        .OAM_DATA_SIZE        ( 32        ) ,
+        .COLOR_DEPTH          ( 8         ) ,
+        .DISPLAY_WIDTH        ( 600       ) ,
+        .DISPLAY_HEIGHT       ( 480       ) ,
+        .LINE_NUMBER_WIDTH    ( $size(sy) )
     ) u_sprite_drawer (
-        .clk             (clk_pix),
-        .rst             (!btn_rst),
-        .enable          (prepare_line_done),
-        .done            (sprite_drawer_done),
-        .oam_a           (oam_read_address_draw_sprite),
-        .oam_d           (oam_read_data),
-        .vram_a          (sprite_read_address),
-        .vram_d          (sprite_read_data),
-        .second_array    (LineObjectArray),
-        .line_number     (sy),
-        .line_buffer     (LineBuffer_next_line)
+        .clk             (clk_pix                      ) ,
+        .rst             (!btn_rst                     ) ,
+        .enable          (prepare_line_done            ) ,
+        .done            (sprite_drawer_done           ) ,
+        .oam_a           (oam_read_address_draw_sprite ) ,
+        .oam_d           (oam_read_data                ) ,
+        .vram_a          (sprite_read_address          ) ,
+        .vram_d          (sprite_read_data             ) ,
+        .second_array    (LineObjectArray              ) ,
+        .line_number     (sy                           ) ,
+        .line_buffer     (LineBuffer_next_line         )
     );
     
     logic [CORDW-1:0][7:0] LineBuffer_next_line;
@@ -196,31 +196,6 @@ module display_driver (
     end
 
     assign palette_read_addr = !de ? 8'h0 : LineBuffer_current_line[sx_next];
-
-
-    wtf_is_wrong ILA(
-        .clk     ( clk_pix                  ) ,
-        .probe0  ( palette_read_data[23:20] ) ,
-        .probe1  ( palette_read_data[15:11] ) ,
-        .probe2  ( palette_read_data[7:4]   ) ,
-        .probe3  ( sy                       ) ,
-        .probe4  ( last_y                   ) ,
-        .probe5  ( mcu_write_data           ) ,
-        .probe6  ( EBI_WE                   ) ,
-        .probe7  ( EBI_ALE                  ) ,
-        .probe8  ( write_enable_oam         ) ,
-        .probe9  ( write_enable_tam         ) ,
-        .probe10 ( write_enable_vram_sprite ) ,
-        .probe11 ( write_enable_vram_tile   ) ,
-        .probe12 ( write_enable_palette     ) ,
-        .probe13 ( mcu_write_address        ) ,
-        .probe14 ( EBI_AD                   ) ,
-        .probe15 ( bank_select[0]           ) ,
-        .probe16 ( bank_select[1]           ) ,
-        .probe17 ( bank_select[2]           ) ,
-        .probe18 ( write_enable             ) 
-    );
-
 
     // size of screen (excluding blanking)
     localparam H_RES = 640;
