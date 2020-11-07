@@ -1,24 +1,4 @@
 `timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 19.09.2020 21:30:49
-// Design Name: 
-// Module Name: ebi_interface
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-//////////////////////////////////////////////////////////////////////////////////
-
 
 module ebi_interface(
     // Assuming 16-bit bus write only
@@ -32,65 +12,37 @@ module ebi_interface(
     output logic [15:0] address_out,
     output logic [15:0] data_out,
     output logic data_ready
-    );
+);
 
-    logic [15:0] A1;
-    logic [15:0] A2;
-    logic [15:0] D1;
-    logic [15:0] D2;
-    logic WE_1;
-    logic WE_2;
-    logic WE_3;
-    logic WE_4;
+logic [15:0] latched_address, latched_data;
 
-    logic WE_1_2_block;
-
-    always_ff @(posedge clk) begin
-        A2 <= A1;
-        D2 <= D1;
-
-        address_out <= A2;
-        data_out <= D2;
-
-        WE_2 <= WE_1;
-        WE_3 <= WE_2;
-        WE_4 <= WE_3;
+always_latch begin
+    if (~EBI_ALE) begin
+        latched_address = EBI_AD;
     end
-
-    assign data_ready = ( (~WE_4) & WE_3 );
-    assign WE_1_2_block = ( WE_1 ^ WE_2 );
-
-    always @* begin
-        if (reset) begin
-            D1 = 0;
-            
-        end
-        else if (~EBI_WE) begin
-            D1 = EBI_AD[15:0];
-            
-        end
+    if (~EBI_WE) begin
+        latched_data = EBI_AD;
     end
+end
 
-    always @* begin
-        if (reset) begin
-            WE_1 = 0;
-        end
-        else if (~EBI_WE) begin
-            WE_1 = 1;
-        end
-        else if (EBI_WE) begin
-            if (~WE_1_2_block) begin
-                WE_1 = 0;
-            end
-        end
-    end
+// The following does not work in synthesis, So I've made my own below
+// always_ff @(posedge clk, negedge EBI_WE) begin
+//     data_ready_d <= ~EBI_WE;
+// end
 
-    always @* begin
-        if (reset) begin
-            A1 = 0;
-        end
-        else if (~EBI_ALE) begin
-            A1 = EBI_AD[15:0];
-        end 
-    end
+// ------------------- WEIRD CODE --------------------- //
+wire not_we, A, not_A, Q, not_Q;
+assign not_we = ~EBI_WE;
+assign A =      ~((  ~not_we   ) & not_A);
+assign not_A =  ~((clk | not_we) & A);
+assign Q =      ~(~( (   A  & clk) | not_we) & not_Q);
+assign not_Q =  ~( (~(not_A & clk) | not_we) & Q);
+// ---------------------------------------------------- //
+
+// Add synchronization layer if bugging out
+always_ff @(posedge clk) begin
+    address_out <= latched_address;
+    data_out <= latched_data;
+    data_ready <= Q;
+end
 endmodule

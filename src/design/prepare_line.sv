@@ -1,23 +1,4 @@
 `timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 18.10.2020 14:49:22
-// Design Name: 
-// Module Name: prepare_line
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-//////////////////////////////////////////////////////////////////////////////////
 
 /*
 OAM: 2 16-bit addresses 
@@ -43,24 +24,28 @@ module prepare_line(clk, reset, oam_data, sx, sy, oam_addr, BufferArray, line_pr
     input wire reset;
     input wire [31:0] oam_data;
     input wire [9:0] sx;
-    input wire [9:0] sy; 
+    input wire [9:0] sy;
     output wire [5:0] oam_addr;
     output logic [maxObjectPerLine - 1 : 0][OAM_ADDR_SIZE:0] BufferArray;
     output logic line_prepeared;
 
+
     // Control signals
     logic line_prepared_d, line_prepared_q;
-    logic last_sy, sy_changed;
+    logic [9:0] last_sy;
+    logic sy_changed;
     logic should_write;
 
     // Counters
-    logic [OAM_ADDR_SIZE-1:0] oam_index_d, oam_index_q;
+    logic [OAM_ADDR_SIZE-1:0] oam_index_d, oam_index_q, oam_index_previous;
     int buffer_array_index_d, buffer_array_index_q;
 
     // Object memory
     logic [31:0] object;
     int object_ypos;
+    logic object_enabled;
     assign object_ypos = object[27:18];
+    assign object_enabled = object[31];
 
     // Sprite calculations
     int sprite_line;
@@ -80,8 +65,7 @@ module prepare_line(clk, reset, oam_data, sx, sy, oam_addr, BufferArray, line_pr
         sprite_line = sy - object_ypos;
         sprite_is_on_line = (sprite_line >= 0 && sprite_line < 16);
 
-        buffer_array_element_d = {oam_index_q, 1'b1};
-        oam_index_d = oam_index_q + sprite_is_on_line;
+        buffer_array_element_d = {oam_index_previous, 1'b1};
 
         // Counters
         if (sy_changed) begin
@@ -93,14 +77,13 @@ module prepare_line(clk, reset, oam_data, sx, sy, oam_addr, BufferArray, line_pr
                 buffer_array_index_d = buffer_array_index_q;
             end else begin
                 oam_index_d = oam_index_q + 1;
-                buffer_array_index_d = buffer_array_index_q + sprite_is_on_line;
+                buffer_array_index_d = buffer_array_index_q + should_write;
             end
         end
 
         // Control signals
-        sy_changed = last_sy != sy;
         line_prepared_d = ((buffer_array_index_q >= maxObjectPerLine - 1) || (oam_index_q >= OAMMaxObjects - 1))  &&  ~sy_changed;
-        should_write = sprite_is_on_line && ~line_prepared_q;
+        should_write = object_enabled && sprite_is_on_line && ~line_prepared_q && ~sy_changed;
 
         // Output
         line_prepeared = line_prepared_q;
@@ -110,17 +93,20 @@ module prepare_line(clk, reset, oam_data, sx, sy, oam_addr, BufferArray, line_pr
     always_ff @(posedge clk, posedge reset) begin
         if (reset) begin
             oam_index_q <= 0;
+            oam_index_previous <= 0;
             buffer_array_index_q <= 0;
             buffer_array_q <= 0;
-            last_sy <= 0;
+            last_sy <= -1;
             line_prepared_q <= 0;
         end else begin
             oam_index_q <= oam_index_d;
+            oam_index_previous <= oam_index_q;
             if (should_write) begin
                 buffer_array_q[buffer_array_index_q] <= buffer_array_element_d;
             end else if (sy_changed) begin
                 buffer_array_q <= 0;
             end
+            sy_changed <= last_sy != sy;
             buffer_array_index_q <= buffer_array_index_d;
             last_sy <= sy;
             line_prepared_q <= line_prepared_d;

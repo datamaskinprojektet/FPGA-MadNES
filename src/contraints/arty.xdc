@@ -2,6 +2,12 @@
 ## (C)2020 Will Green, open source hardware released under the MIT License
 ## Learn more at https://projectf.io
 
+set_property ALLOW_COMBINATORIAL_LOOPS TRUE [get_nets {u_ebi_interface/Q}]
+set_property ALLOW_COMBINATORIAL_LOOPS TRUE [get_nets {u_ebi_interface/data_ready_i_2}]
+
+set_property SEVERITY {Warning}  [get_drc_checks LUTLP-1]
+set_property SEVERITY {Warning} [get_drc_checks NSTD-1]
+
 ## FPGA Configuration I/O Options
 set_property CONFIG_VOLTAGE 3.3 [current_design]
 set_property CFGBVS VCCO [current_design]

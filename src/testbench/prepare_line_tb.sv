@@ -24,7 +24,7 @@ module prepare_line_tb();
 
     parameter int maxObjectPerLine = 32;
     parameter int OAM_ADDR_SIZE = 6;
-    parameter int OAM_MAX_OBJECTS = 256;
+    parameter int OAM_MAX_OBJECTS = 64;
 
     logic           reset;
     logic           clk;
@@ -42,7 +42,7 @@ module prepare_line_tb();
 
     prepare_line #(
         .maxObjectPerLine(maxObjectPerLine), 
-        .OAMMaxObjects(256),
+        .OAMMaxObjects(OAM_MAX_OBJECTS),
         .OAM_ADDR_SIZE(OAM_ADDR_SIZE)
         ) u_prepare_line (
         .clk            (clk),
@@ -104,8 +104,11 @@ module prepare_line_tb();
             #0.1;
             $display("%t : posedge line_prepeared", $time);
             $display("Used %d on %d objects", clk_count, u_prepare_line.OAMMaxObjects);
-            bufferArrayEmpty: assert (BufferArray == BufferArrayCheck)
-                else $error("Assertion bufferArrayEmpty failed!");
+            $display("Buffer: %p\nCheck: %p", BufferArray, BufferArrayCheck);
+            for (int i=0; i<maxObjectPerLine; i++) begin
+                bufferArrayCorrect: assert (BufferArray[i] == BufferArrayCheck[i])
+                    else $error("Assertion bufferArrayCorrect[%d] failed!\nBuffer=%d, Check=%d", i, BufferArray[i], BufferArrayCheck[i]);
+            end
             disable f;
         end
     join
@@ -126,12 +129,7 @@ module prepare_line_tb();
     resetModule();
     $display("prepare_line Unit Test");
     $display("prepare_line Testing empty buffer array");
-    foreach (BufferArrayCheck[i]) begin
-        BufferArrayCheck[i] = {
-            i,
-            1'b1
-        };
-    end
+    BufferArrayCheck = 0;
     test_empty_buffer_array();
     $display("prepare_line Testing empty buffer array Done");
 
