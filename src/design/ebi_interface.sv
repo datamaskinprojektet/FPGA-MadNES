@@ -39,6 +39,7 @@ assign Q =      ~(~( (   A  & clk) | not_we) & not_Q);
 assign not_Q =  ~( (~(not_A & clk) | not_we) & Q);
 // ---------------------------------------------------- //
 
+// Add synchronization layer if bugging out
 always_ff @(posedge clk) begin
     address_out <= latched_address;
     data_out <= latched_data;

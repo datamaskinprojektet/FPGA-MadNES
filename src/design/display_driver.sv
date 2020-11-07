@@ -149,7 +149,7 @@ module display_driver (
     
     prepare_line #(
         .maxObjectPerLine(32), 
-        .OAMMaxObjects(256)
+        .OAMMaxObjects(64)
     ) prepare_line (
         .clk            (clk_pix),
         .reset          (!btn_rst),

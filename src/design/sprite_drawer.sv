@@ -1,23 +1,4 @@
 `timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 16.10.2020 18:05:49
-// Design Name: 
-// Module Name: sprite_drawer
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-//////////////////////////////////////////////////////////////////////////////////
 
 /*
 OAM: 2 16-bit words
@@ -54,7 +35,7 @@ module sprite_drawer #(
     output logic [DISPLAY_WIDTH-1:0][7:0] line_buffer
 );
 
-localparam int SECOND_ARRAY_INDEX_WIDTH = $clog2(SECOND_ARRAY_SIZE);
+localparam int SECOND_ARRAY_INDEX_WIDTH = 5;//$clog2(SECOND_ARRAY_SIZE);
 
 logic priority_d, priority_q;
 logic [SECOND_ARRAY_INDEX_WIDTH-1:0] array_index_d, array_index_q;
@@ -90,7 +71,11 @@ always_comb begin
         oam_a = object_address;
         vram_a = {object_spriteref, 4'b0};
         object = oam_d;
-        array_index_d = array_index_q + 1;
+        if (~last_object_is_fetched) begin
+            array_index_d = array_index_q + 1;
+        end else begin
+            array_index_d = array_index_q;
+        end
         sprite_line = vram_d;
         last_object_is_fetched = (~object_exists) | (array_index_q >= SECOND_ARRAY_SIZE-1);
     end else begin
@@ -114,10 +99,15 @@ always_ff @(posedge clk, posedge rst) begin
         priority_q <= priority_d;
         array_index_q <= array_index_d;
         done <= last_object_is_fetched;
-        for (int i=0; i<16; i++) begin
-            line_buffer[object_xpos+i] <= sprite_line[i];
+        if (enable) begin
+            if (~done) begin
+                for (int i=0; i<16; i++) begin
+                    line_buffer[object_xpos+i] <= sprite_line[i];
+                end
+            end
+        end else begin
+            line_buffer <= 0;
         end
     end
 end
-
 endmodule
