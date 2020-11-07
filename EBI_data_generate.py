@@ -11,7 +11,7 @@
 
 OAM = [
     {
-        "spriteref":123,
+        "spriteref":1,
         "x_pos":1,
         "y_pos":2,
         "x_flip":0,
@@ -31,42 +31,26 @@ OAM = [
 ]
 
 SPRITE = [
-    {
-        0:5,
-        1:5,
-        2:5,
-        3:5,
-        4:5,
-        5:5,
-        6:5,
-        7:5,
-        8:5,
-        9:5,
-        10:5,
-        11:5,
-        12:5,
-        13:5,
-        14:5,
-        15:5
-    },
-    {
-        0: 1,
-        1: 1,
-        2: 1,
-        3: 1,
-        4: 1,
-        5: 1,
-        6: 1,
-        7: 1,
-        8: 1,
-        9: 1,
-        10:1,
-        11:1,
-        12:1,
-        13:1,
-        14:1,
-        15:1
-    }
+    [
+        5,5,5,5,5,5,5,5,
+        5,5,5,5,5,5,5,5,
+        5,5,5,5,5,5,5,5,
+        5,5,5,5,5,5,5,5,
+        5,5,5,5,5,5,5,5,
+        5,5,5,5,5,5,5,5,
+        5,5,5,5,5,5,5,5,
+        5,5,5,5,5,5,5,5,
+        5,5,5,5,5,5,5,5,
+        5,5,5,5,5,5,5,5,
+        5,5,5,5,5,5,5,5,
+        5,5,5,5,5,5,5,5,
+        5,5,5,5,5,5,5,5,
+        5,5,5,5,5,5,5,5,
+        5,5,5,5,5,5,5,5,
+        5,5,5,5,5,5,5,5,
+
+
+    ]
 ]
 
 PALLET = [
@@ -165,7 +149,7 @@ wait_clock_cycles(2, clockCycle)
 index = 0
 print("bank_select = 1;")
 for sprite_obj in SPRITE:
-    for offset in range(0,16):
+    for offset in range(0,128):
         sprite_obj[offset]= ([str(x) for x in '{:016b}'.format(sprite_obj[offset])])
         print("EBI_AD = "+str(offset+index)+";")
         print("#1;")
@@ -180,7 +164,7 @@ for sprite_obj in SPRITE:
         print("EBI_WE = 1;")
         print("#1;")
         wait_clock_cycles(2, clockCycle)
-    index += 16
+    index += 128
 
 
 print("")

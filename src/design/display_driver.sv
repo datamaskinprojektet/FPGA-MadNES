@@ -62,6 +62,9 @@ module display_driver (
     assign write_enable_palette     = (bank_select == 3) & write_enable;
     assign write_enable_tam         = (bank_select == 4) & write_enable;
 
+    // size of screen (excluding blanking)
+    localparam H_RES = 640;
+    localparam V_RES = 480;
 
     ebi_interface u_ebi_interface (
         // Assuming 16-bit bus multiplexing and write only
@@ -143,7 +146,7 @@ module display_driver (
     );
 
     wire prepare_line_done;
-    logic [32 - 1 : 0][8:0] LineObjectArray;
+    logic [32 - 1 : 0][6:0] LineObjectArray;
     wire [5:0] oam_read_address_prepare_line, oam_read_address_draw_sprite;
     assign oam_read_address = prepare_line_done ? oam_read_address_draw_sprite : oam_read_address_prepare_line;
     
@@ -160,6 +163,9 @@ module display_driver (
         .BufferArray    (LineObjectArray),
         .line_prepeared (prepare_line_done)
     );
+
+    logic [H_RES-1:0][7:0] LineBuffer_next_line;
+    logic [H_RES-1:0][7:0] LineBuffer_current_line;
 
     wire sprite_drawer_done;
     sprite_drawer #(
@@ -186,8 +192,6 @@ module display_driver (
         .line_buffer     (LineBuffer_next_line         )
     );
     
-    logic [CORDW-1:0][7:0] LineBuffer_next_line;
-    logic [CORDW-1:0][7:0] LineBuffer_current_line;
     always_ff @(posedge clk_pix) begin
         if (last_y != sy) begin
             LineBuffer_current_line <= LineBuffer_next_line;
@@ -196,10 +200,6 @@ module display_driver (
     end
 
     assign palette_read_addr = !de ? 8'h0 : LineBuffer_current_line[sx_next];
-
-    // size of screen (excluding blanking)
-    localparam H_RES = 640;
-    localparam V_RES = 480;
 
     logic animate;  // high for one clock tick at start of blanking
     always_comb animate = (sy == 480 && sx == 0);

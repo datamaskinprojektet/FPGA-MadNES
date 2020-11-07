@@ -14,7 +14,7 @@ module oam_memory(
 wire enable [1:0];
 generate;
     genvar i;
-    for(i=0; i<2; i++) begin
+    for(i=0; i<2; i++) begin: myram_gen
         assign enable[i] = write_enable && (write_addr[0] == i);
         bram_16x256 myram (
             .clk(clk),

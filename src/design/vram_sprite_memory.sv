@@ -14,7 +14,7 @@ wire enable [7:0];
 
 generate;
     genvar i;
-    for(i=0; i<8; i++) begin
+    for(i=0; i<8; i++) begin : myram_gen
         assign enable[i] = write_enable && (write_addr[2:0] == i);
         bram_16x4096 myram (
             .clk(clk),
