@@ -63,13 +63,15 @@ assign object_yflip     = object[30];
 assign object_enable    = object[31];
 
 logic [15:0][7:0] sprite_line;
+logic [3:0] sprite_row_index;
 
 always_comb begin
     priority_d = priority_q;
     
     if(enable) begin
         oam_a = object_address;
-        vram_a = {object_spriteref, 4'b0};
+        sprite_row_index = line_number - object_ypos;
+        vram_a = {object_spriteref, sprite_row_index};
         object = oam_d;
         if (~last_object_is_fetched) begin
             array_index_d = array_index_q + 1;
@@ -80,6 +82,7 @@ always_comb begin
         last_object_is_fetched = (~object_exists) | (array_index_q >= SECOND_ARRAY_SIZE-1);
     end else begin
         priority_d = 0;
+        sprite_row_index = 0;
         array_index_d = 0;
         object = 0;
         sprite_line = 0;
