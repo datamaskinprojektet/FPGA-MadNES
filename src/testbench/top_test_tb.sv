@@ -20,6 +20,7 @@ module top_test_tb();
     logic [50:0] clk_count;
 
     int fd;
+    int data_sendt;
 
     display_driver dut_display_driver(
     .clk_100m        (clk),             
@@ -37,10 +38,6 @@ module top_test_tb();
     );                
 
     always #(CLK_PERIOD / 2) clk = ~clk;
-
-    always @(posedge clk) begin
-        clk_count++;
-    end
 
 
     task resetModule();
@@ -123,6 +120,33 @@ module top_test_tb();
         EBI_ALE = 1;
         #1;
         EBI_AD = 16'b1000000000000000;
+        #1;
+        EBI_WE = 0;
+        #1;
+        EBI_WE = 1;
+        #1;
+
+        #79.36;
+        EBI_AD = 4;
+        #1;
+        EBI_ALE = 0;
+        #1;
+        EBI_ALE = 1;
+        #1;
+        EBI_AD = 16'b1111101000000001;
+        #1;
+        EBI_WE = 0;
+        #1;
+        EBI_WE = 1;
+        #1;
+        #79.36;
+        EBI_AD = 5;
+        #1;
+        EBI_ALE = 0;
+        #1;
+        EBI_ALE = 1;
+        #1;
+        EBI_AD = 16'b1000000000101000;
         #1;
         EBI_WE = 0;
         #1;
@@ -1969,20 +1993,27 @@ module top_test_tb();
 
     always @ (posedge dut_display_driver.clk_pix)
     begin
+        clk_count++;
         if(dut_display_driver.de)
         begin
             fd = $fopen("display_data.txt","a"); //Opening file for write
-            $fwrite(fd,"%d,%d,%d \n",vga_r,vga_g,vga_b);
+            $fwrite(fd,"%d,%d,%d,%d,%d\n",dut_display_driver.sx,dut_display_driver.sy,vga_r,vga_g,vga_b);
             $fclose(fd);
+        end
+    end
+    always @ (posedge dut_display_driver.clk_pix)
+    begin
+        if (clk_count == 10)
+        begin
+            write_oam_data();
+            write_sprite_data();
+            write_pallet_data();
         end
     end
 
     initial begin
     resetModule();
     $display("topmodule testing");
-    write_oam_data();
-    write_sprite_data();
-    write_pallet_data();
     #18_000_000; // 18 ms (one frame is 16.7 ms)
     $finish;  
         

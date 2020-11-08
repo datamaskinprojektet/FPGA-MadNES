@@ -27,7 +27,16 @@ OAM = [
         "y_flip":0,
         "priority":0,
         "enable":1
-    }
+    },
+    {    
+        "spriteref":1,
+        "x_pos":250,
+        "y_pos":10,
+        "x_flip":0,
+        "y_flip":0,
+        "priority":0,
+        "enable":1
+    },
 ]
 
 SPRITE = [
