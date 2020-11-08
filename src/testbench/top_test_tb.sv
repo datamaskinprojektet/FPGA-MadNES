@@ -80,9 +80,7 @@ module top_test_tb();
         clk_count++;
         if(dut_display_driver.de)
         begin
-            fd = $fopen("display_data.txt","a"); //Opening file for write
             $fwrite(fd,"%d,%d,%d,%d,%d\n",dut_display_driver.sx,dut_display_driver.sy,(vga_r_8_bit << 4),(vga_g_8_bit << 4),(vga_b_8_bit << 4));
-            $fclose(fd);
         end
     end
     always @ (posedge dut_display_driver.clk_pix)
@@ -96,13 +94,14 @@ module top_test_tb();
     end
 
     initial begin
+    fd = $fopen("display_data.txt","w"); //Opening file for write
     resetModule();
     $display("topmodule testing");
     //#18_000_000; // 18 ms (one frame is 16.7 ms)
     wait(vga_vsync== 1'b0);
     @(posedge dut_display_driver.clk_pix);
-    $finish;  
-        
+    $fclose(fd);
+    $finish; 
     end
 
 endmodule
