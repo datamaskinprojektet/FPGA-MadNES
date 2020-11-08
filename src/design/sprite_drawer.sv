@@ -35,11 +35,11 @@ module sprite_drawer #(
     output logic [DISPLAY_WIDTH-1:0][7:0] line_buffer
 );
 
-localparam int SECOND_ARRAY_INDEX_WIDTH = 5;//$clog2(SECOND_ARRAY_SIZE);
+localparam int SECOND_ARRAY_INDEX_WIDTH = $clog2(SECOND_ARRAY_SIZE);
 
 logic priority_d, priority_q;
 logic [SECOND_ARRAY_INDEX_WIDTH-1:0] array_index_d, array_index_q;
-logic last_object_is_fetched;
+logic last_object_is_fetched, sprite_line_valid_q, sprite_line_valid_d;
 
 logic [7:0] object_address;
 logic object_exists;
@@ -67,19 +67,20 @@ logic [3:0] sprite_row_index;
 
 always_comb begin
     priority_d = priority_q;
-    
+
     if(enable) begin
         oam_a = object_address;
         sprite_row_index = line_number - object_ypos;
         vram_a = {object_spriteref, sprite_row_index};
         object = oam_d;
-        if (~last_object_is_fetched) begin
+        if (!last_object_is_fetched && !done) begin
             array_index_d = array_index_q + 1;
         end else begin
             array_index_d = array_index_q;
         end
         sprite_line = vram_d;
         last_object_is_fetched = (~object_exists) | (array_index_q >= SECOND_ARRAY_SIZE-1);
+        sprite_line_valid_d = 1;
     end else begin
         priority_d = 0;
         sprite_row_index = 0;
@@ -89,6 +90,7 @@ always_comb begin
         last_object_is_fetched = 0;
         oam_a = 0;
         vram_a = 0;
+        sprite_line_valid_d = 0;
     end
 end
 
@@ -98,12 +100,14 @@ always_ff @(posedge clk, posedge rst) begin
         array_index_q <= 0;
         done <= 0;
         line_buffer <= 0;
+        sprite_line_valid_q <= 0;
     end else begin
         priority_q <= priority_d;
         array_index_q <= array_index_d;
         done <= last_object_is_fetched;
+        sprite_line_valid_q <= sprite_line_valid_d;
         if (enable) begin
-            if (~done) begin
+            if (!done && sprite_line_valid_q) begin
                 for (int i=0; i<16; i++) begin
                     line_buffer[object_xpos+i] <= sprite_line[i];
                 end

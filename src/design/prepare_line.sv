@@ -82,8 +82,10 @@ module prepare_line(clk, reset, oam_data, sx, sy, oam_addr, BufferArray, line_pr
         end
 
         // Control signals
-        line_prepared_d = ((buffer_array_index_q >= maxObjectPerLine - 1) || (oam_index_q >= OAMMaxObjects - 1))  &&  ~sy_changed;
-        should_write = object_enabled && sprite_is_on_line && ~line_prepared_q && ~sy_changed;
+        line_prepared_d = 
+               ((buffer_array_index_q >= maxObjectPerLine - 1) || (oam_index_q >= OAMMaxObjects - 1))
+            || (line_prepared_q  &&  !sy_changed);
+        should_write = object_enabled && sprite_is_on_line && !line_prepared_q && !sy_changed;
 
         // Output
         line_prepeared = line_prepared_q;
