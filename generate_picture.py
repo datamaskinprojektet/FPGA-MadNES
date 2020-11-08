@@ -1,6 +1,6 @@
-from PIL import Image
-import math 
+import math
 import csv
+from PIL import Image
 
 pictureArray = []
 
@@ -12,20 +12,16 @@ for x in range(0,640):
 
 with open('vivado_project/vivado_project.sim/sim_1/behav/xsim/display_data.txt', newline='') as csvfile:
     pictureData = csv.reader(csvfile, delimiter=',')
-    index = 0
     print(pictureData)
     for obj in pictureData:
-        if index > 640*480:
-            break
         colorObject = [0,0,0]
         for colorIndex in range(0,3):
-            if not "x" in obj[colorIndex+2]:
+            if not "X" in obj[colorIndex+2]:
                 colorObject[colorIndex] = int(obj[colorIndex+2])
             else:
                 colorObject[colorIndex] = 255
                 print("Found x at w: "+ str(int(obj[0])) +" h: "+ str(int(obj[1])) +", changing it to 255")
         pictureArray[int(obj[0])][int(obj[1])] = colorObject
-        index+=1
 
 img = Image.new( 'RGB', (640,480), "black") # Create a new black image
 pixels = img.load() # Create the pixel map

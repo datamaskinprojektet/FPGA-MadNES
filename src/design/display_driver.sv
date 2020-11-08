@@ -150,6 +150,7 @@ module display_driver (
     wire [5:0] oam_read_address_prepare_line, oam_read_address_draw_sprite;
     assign oam_read_address = prepare_line_done ? oam_read_address_draw_sprite : oam_read_address_prepare_line;
     
+    //FIXME: sy needs to be -1, so to prepare y=0 you need to start prepare line and sprite_drawer at y=524
     prepare_line #(
         .maxObjectPerLine(32), 
         .OAMMaxObjects(64)
@@ -175,7 +176,7 @@ module display_driver (
         .OAM_ADDR_SIZE        ( 6         ) ,
         .OAM_DATA_SIZE        ( 32        ) ,
         .COLOR_DEPTH          ( 8         ) ,
-        .DISPLAY_WIDTH        ( 600       ) ,
+        .DISPLAY_WIDTH        ( 640       ) ,
         .DISPLAY_HEIGHT       ( 480       ) ,
         .LINE_NUMBER_WIDTH    ( $size(sy) )
     ) u_sprite_drawer (
@@ -198,8 +199,8 @@ module display_driver (
         end
         last_y <= sy;
     end
-
-    assign palette_read_addr = !de ? 8'h0 : LineBuffer_current_line[sx_next];
+    // changed from sx_next to sx to fix offset error, maybe needed in the future for buffering?
+    assign palette_read_addr = !de ? 8'h0 : LineBuffer_current_line[sx];
 
     logic animate;  // high for one clock tick at start of blanking
     always_comb animate = (sy == 480 && sx == 0);

@@ -1,1 +1,2 @@
 vivado_project/*
+src/testbench/top_test_tb_data
