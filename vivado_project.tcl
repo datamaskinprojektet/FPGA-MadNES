@@ -278,10 +278,13 @@ set files [list \
 add_files -norecurse -fileset $obj $files
 
 # Set 'sim_1' fileset file properties for remote files
+
 set file "$origin_dir/src/testbench/ebi_interface_tb.sv"
+
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sim_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
+
 
 
 # Set 'sim_1' fileset file properties for local files
@@ -290,8 +293,10 @@ set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
 # Set 'sim_1' fileset properties
 set obj [get_filesets sim_1]
 set_property -name "hbs.configure_design_for_hier_access" -value "1" -objects $obj
+
 set_property -name "top" -value "ebi_interface_tb" -objects $obj
 set_property -name "top_auto_set" -value "0" -objects $obj
+
 set_property -name "top_lib" -value "xil_defaultlib" -objects $obj
 
 # Set 'utils_1' fileset object

@@ -3,11 +3,12 @@
 module vram_16b_x_8_x_4096 (
     input wire clk,               // Clock to drive the RAM module
     input wire [11:0] read_addr,  // 12 bits to address 2048 sprite lines
-    input wire [14:0] write_addr, // 15 bits to address 32768 pixel pairs
+    input wire [15:0] write_addr, // 15 bits to address 32768 pixel pairs
     input wire [15:0] write_data,
     input wire write_enable,
     output wire [127:0] read_data
 );
+
 
 wire enable [7:0];
 
@@ -25,5 +26,6 @@ generate;
         );
     end
 endgenerate
+
 
 endmodule
