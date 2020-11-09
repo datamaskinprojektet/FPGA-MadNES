@@ -29,7 +29,7 @@ set_property -dict {PACKAGE_PIN C2 IOSTANDARD LVCMOS33} [get_ports {btn_rst}];
 
 ## Pmod Header JA
 #set_property -dict { PACKAGE_PIN G13   IOSTANDARD LVCMOS33 } [get_ports { EBI_ALE }]; #IO_0_15 Sch=ja[1]
-#set_property -dict { PACKAGE_PIN B11   IOSTANDARD LVCMOS33 } [get_ports { EBI_CS }]; #IO_L4P_T0_15 Sch=ja[2]
+set_property -dict { PACKAGE_PIN B11   IOSTANDARD LVCMOS33 } [get_ports { vga_frame_done }]; #IO_L4P_T0_15 Sch=ja[2]
 #set_property -dict { PACKAGE_PIN A11   IOSTANDARD LVCMOS33 } [get_ports { EBI_RE }]; #IO_L4N_T0_15 Sch=ja[3]
 #set_property -dict { PACKAGE_PIN D12   IOSTANDARD LVCMOS33 } [get_ports { EBI_WE }]; #IO_L6P_T0_15 Sch=ja[4]
 set_property -dict { PACKAGE_PIN D13   IOSTANDARD LVCMOS33 } [get_ports { bank_select[0] }]; #IO_L6N_T0_VREF_15 Sch=ja[7]

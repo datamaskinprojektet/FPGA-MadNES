@@ -22,6 +22,7 @@ module top_test_tb();
     logic [3:0] vga_g;
     logic [3:0] vga_b;
     logic [50:0] clk_count;
+    logic vga_frame_done;
 
     int fd;
     int data_sendt;
@@ -40,7 +41,8 @@ module top_test_tb();
     .vga_vsync       (vga_vsync),             
     .vga_r           (vga_r),       
     .vga_g           (vga_g),       
-    .vga_b           (vga_b)       
+    .vga_b           (vga_b),
+    .vga_frame_done  (vga_frame_done)       
     );                
 
     always #(CLK_PERIOD / 2) clk = ~clk;

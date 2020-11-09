@@ -12,7 +12,7 @@
 **/
 module interrupt_gen(
     input wire clk, 
-    input wire blank,
+    input wire interrupt_trigger,
 
     output wire interrupt
 );
@@ -25,8 +25,8 @@ module interrupt_gen(
     assign interrupt = interrupt1 | interrupt2 | interrupt3;
 
 
-    always_ff @(posedge clk, posedge blank) begin
-        interrupt1 <= blank;
+    always_ff @(posedge clk, posedge interrupt_trigger) begin
+        interrupt1 <= interrupt_trigger;
         interrupt2 <= interrupt1;
         interrupt3 <= interrupt2;
     end

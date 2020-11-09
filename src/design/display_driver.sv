@@ -15,7 +15,8 @@ module display_driver (
     output      logic       vga_vsync,    // vertical sync
     output      logic [3:0] vga_r,        // 4-bit VGA red
     output      logic [3:0] vga_g,        // 4-bit VGA green
-    output      logic [3:0] vga_b         // 4-bit VGA blue
+    output      logic [3:0] vga_b,         // 4-bit VGA blue
+    output      wire        vga_frame_done // Interrupt for indicating frame is done.
     );
 
     
@@ -192,6 +193,15 @@ module display_driver (
         .line_number     (sy                           ) ,
         .line_buffer     (LineBuffer_next_line         )
     );
+
+    logic animate;  // high for one clock tick at start of blanking
+    always_comb animate = (sy == 480 && sx == 0);
+
+    interrupt_gen u_interrupt(
+        .clk(clk_pix),
+        .interrupt_trigger(animate),
+        .interrupt(vga_frame_done)
+    );
     
     always_ff @(posedge clk_pix) begin
         if (last_y != sy) begin
@@ -201,9 +211,6 @@ module display_driver (
     end
     // changed from sx_next to sx to fix offset error, maybe needed in the future for buffering?
     assign palette_read_addr = !de ? 8'h0 : LineBuffer_current_line[sx];
-
-    logic animate;  // high for one clock tick at start of blanking
-    always_comb animate = (sy == 480 && sx == 0);
 
     // VGA output
     always_comb begin
