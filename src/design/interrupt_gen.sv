@@ -25,7 +25,7 @@ module interrupt_gen(
     assign interrupt = interrupt1 | interrupt2 | interrupt3;
 
 
-    always_ff @(posedge clk, posedge interrupt_trigger) begin
+    always_ff @(posedge clk) begin
         interrupt1 <= interrupt_trigger;
         interrupt2 <= interrupt1;
         interrupt3 <= interrupt2;
