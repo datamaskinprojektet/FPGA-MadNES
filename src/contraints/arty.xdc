@@ -5,6 +5,7 @@
 set_property ALLOW_COMBINATORIAL_LOOPS TRUE [get_nets {u_ebi_interface/Q}]
 set_property ALLOW_COMBINATORIAL_LOOPS TRUE [get_nets {u_ebi_interface/data_ready_i_2}]
 set_property ALLOW_COMBINATORIAL_LOOPS TRUE [get_nets {u_ebi_interface/not_A_n_0}]
+set_property ALLOW_COMBINATORIAL_LOOPS TRUE [get_nets {u_ebi_interface/not_A_n_0_0}]
 
 set_property SEVERITY {Warning}  [get_drc_checks LUTLP-1]
 set_property SEVERITY {Warning} [get_drc_checks NSTD-1]
