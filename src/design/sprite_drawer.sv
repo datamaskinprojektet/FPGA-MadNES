@@ -39,13 +39,14 @@ localparam int SECOND_ARRAY_INDEX_WIDTH = $clog2(SECOND_ARRAY_SIZE);
 
 logic priority_d, priority_q;
 logic [SECOND_ARRAY_INDEX_WIDTH-1:0] array_index_d, array_index_q;
-logic last_object_is_fetched, sprite_line_valid_q, sprite_line_valid_d;
+logic last_object_is_fetched, last_spriteline_is_drawn, sprite_line_valid_q, object_valid_q;
 
 logic [7:0] object_address;
 logic object_exists;
 assign object_address = second_array[array_index_q][OAM_ADDR_SIZE:1];
 assign object_exists = second_array[array_index_q][0];
 
+// Fetched object
 logic [OAM_DATA_SIZE-1:0] object;
 logic [7:0] object_spriteref;
 logic [9:0] object_xpos;
@@ -61,6 +62,10 @@ assign object_priority  = object[28];
 assign object_xflip     = object[29];
 assign object_yflip     = object[30];
 assign object_enable    = object[31];
+
+// Shifted object properties for spriteline use
+logic [9:0] sprite_xpos;
+logic sprite_xflip;
 
 logic [15:0][7:0] sprite_line;
 logic [3:0] sprite_row_index;
@@ -80,7 +85,6 @@ always_comb begin
         end
         sprite_line = vram_d;
         last_object_is_fetched = (~object_exists) | (array_index_q >= SECOND_ARRAY_SIZE-1);
-        sprite_line_valid_d = 1;
     end else begin
         priority_d = 0;
         sprite_row_index = 0;
@@ -90,7 +94,6 @@ always_comb begin
         last_object_is_fetched = 0;
         oam_a = 0;
         vram_a = 0;
-        sprite_line_valid_d = 0;
     end
 end
 
@@ -104,12 +107,25 @@ always_ff @(posedge clk, posedge rst) begin
     end else begin
         priority_q <= priority_d;
         array_index_q <= array_index_d;
-        done <= last_object_is_fetched;
-        sprite_line_valid_q <= sprite_line_valid_d;
+
+        // -------- Pipeline control signals --------
+        // Startup
+        object_valid_q <= enable;
+        sprite_line_valid_q <= object_valid_q;
+
+        // End
+        last_spriteline_is_drawn <= last_object_is_fetched;
+        done <= last_spriteline_is_drawn;
+
+        // -------- Shift object properties used when writing spriteline --------
+        sprite_xpos <= object_xpos;
+        sprite_xflip <= object_xflip;
+
+        // -------- Draw to linebuffer --------
         if (enable) begin
             if (!done && sprite_line_valid_q) begin
                 for (int i=0; i<16; i++) begin
-                    line_buffer[object_xpos+i] <= sprite_line[i];
+                    line_buffer[sprite_xpos+i] <= sprite_line[i];
                 end
             end
         end else begin

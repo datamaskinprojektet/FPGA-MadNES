@@ -95,7 +95,7 @@ PALLET = [
     },
     {
         "r":0,
-        "g":128,
+        "g":143,
         "b":255
     },
     {
@@ -145,7 +145,7 @@ for oam_obj in OAM:
     oam_obj["y_flip"]   = ([str(x) for x in '{:01b}'.format(oam_obj["y_flip"])])
     oam_obj["priority"] = ([str(x) for x in '{:01b}'.format(oam_obj["priority"])])
     oam_obj["enable"]   = ([str(x) for x in '{:01b}'.format(oam_obj["enable"])])
-    dataobject1 =  "".join(oam_obj["x_pos"][2:11]) + "".join(oam_obj["spriteref"])
+    dataobject1 = "".join(oam_obj["x_pos"][2:11]) + "".join(oam_obj["spriteref"])
     dataobject2 = "".join(oam_obj["enable"]) + "".join(oam_obj["priority"]) + "".join(oam_obj["y_flip"]) + "".join(oam_obj["x_flip"]) + "".join(oam_obj["y_pos"])  + "".join(oam_obj["x_pos"][:2])
 
     print("EBI_AD = "+str(index)+";")

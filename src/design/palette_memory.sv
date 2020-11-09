@@ -30,6 +30,4 @@ end
 always_comb begin
     read_data <= PALETTE_RAM[read_addr];
 end
-
-
 endmodule

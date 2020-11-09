@@ -150,7 +150,7 @@ module display_driver (
     logic [32 - 1 : 0][6:0] LineObjectArray;
     wire [5:0] oam_read_address_prepare_line, oam_read_address_draw_sprite;
     assign oam_read_address = prepare_line_done ? oam_read_address_draw_sprite : oam_read_address_prepare_line;
-    
+
     //FIXME: sy needs to be -1, so to prepare y=0 you need to start prepare line and sprite_drawer at y=524
     prepare_line #(
         .maxObjectPerLine(32), 
@@ -202,7 +202,7 @@ module display_driver (
         .interrupt_trigger(animate),
         .interrupt(vga_frame_done)
     );
-    
+
     always_ff @(posedge clk_pix) begin
         if (last_y != sy) begin
             LineBuffer_current_line <= LineBuffer_next_line;
@@ -214,8 +214,8 @@ module display_driver (
 
     // VGA output
     always_comb begin
-        vga_r = !de ? 4'h0 : palette_read_data[23:20];
-        vga_g = !de ? 4'h0 : palette_read_data[15:11];
-        vga_b = !de ? 4'h0 : palette_read_data[7:4];
+        vga_r = (!de) ? (4'h0) : (palette_read_data[23 -: 4]);
+        vga_g = (!de) ? (4'h0) : (palette_read_data[15 -: 4]);
+        vga_b = (!de) ? (4'h0) : (palette_read_data[7  -: 4]);
     end
 endmodule
