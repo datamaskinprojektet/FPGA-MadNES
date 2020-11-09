@@ -58,9 +58,9 @@ logic object_enable;
 assign object_spriteref = object[7:0];
 assign object_xpos      = object[17:8];
 assign object_ypos      = object[27:18];
-assign object_priority  = object[28];
-assign object_xflip     = object[29];
-assign object_yflip     = object[30];
+assign object_xflip     = object[28];
+assign object_yflip     = object[29];
+assign object_priority  = object[30];
 assign object_enable    = object[31];
 
 // Shifted object properties for spriteline use
