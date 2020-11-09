@@ -22,7 +22,7 @@ OAM = [
     {
         "spriteref":0,
         "x_pos":250,
-        "y_pos":250,
+        "y_pos":8,
         "x_flip":0,
         "y_flip":0,
         "priority":0,
@@ -30,8 +30,17 @@ OAM = [
     },
     {
         "spriteref":0,
-        "x_pos":250,
-        "y_pos":10,
+        "x_pos":266,
+        "y_pos":9,
+        "x_flip":0,
+        "y_flip":0,
+        "priority":0,
+        "enable":1
+    },
+    {
+        "spriteref":0,
+        "x_pos":150,
+        "y_pos":2,
         "x_flip":0,
         "y_flip":0,
         "priority":0,
@@ -40,7 +49,16 @@ OAM = [
     {
         "spriteref":1,
         "x_pos":350,
-        "y_pos":400,
+        "y_pos":2,
+        "x_flip":0,
+        "y_flip":0,
+        "priority":0,
+        "enable":1
+    },
+    {
+        "spriteref":1,
+        "x_pos":400,
+        "y_pos":2,
         "x_flip":0,
         "y_flip":0,
         "priority":0,
