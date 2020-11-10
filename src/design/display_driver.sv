@@ -163,7 +163,7 @@ module display_driver (
         .sy             (sy),
         .oam_addr       (oam_read_address_prepare_line),
         .BufferArray    (LineObjectArray),
-        .line_prepeared (prepare_line_done)
+        .line_prepared  (prepare_line_done)
     );
 
     logic [H_RES-1:0][7:0] LineBuffer_next_line;
