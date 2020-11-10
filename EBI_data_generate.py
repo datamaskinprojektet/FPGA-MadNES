@@ -21,7 +21,7 @@ OAM = [
         "spriteref":0,
         "x_pos":18,
         "y_pos":18,
-        "x_flip":0,
+        "x_flip":1,
         "y_flip":0,
         "priority":0,
         "enable":1
@@ -31,7 +31,7 @@ OAM = [
         "x_pos":34,
         "y_pos":34,
         "x_flip":0,
-        "y_flip":0,
+        "y_flip":1,
         "priority":0,
         "enable":1
     },
@@ -39,8 +39,8 @@ OAM = [
         "spriteref":0,
         "x_pos":50,
         "y_pos":50,
-        "x_flip":0,
-        "y_flip":0,
+        "x_flip":1,
+        "y_flip":1,
         "priority":0,
         "enable":1
     },
@@ -57,7 +57,7 @@ OAM = [
         "spriteref":1,
         "x_pos":66,
         "y_pos":2,
-        "x_flip":0,
+        "x_flip":1,
         "y_flip":0,
         "priority":0,
         "enable":1

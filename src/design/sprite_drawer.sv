@@ -51,9 +51,9 @@ logic [OAM_DATA_SIZE-1:0] object;
 logic [7:0] object_spriteref;
 logic [9:0] object_xpos;
 logic [9:0] object_ypos;
-logic object_priority;
 logic object_xflip;
 logic object_yflip;
+logic object_priority;
 logic object_enable;
 assign object_spriteref = object[7:0];
 assign object_xpos      = object[17:8];
@@ -75,7 +75,7 @@ always_comb begin
 
     if(enable) begin
         oam_a = object_address;
-        sprite_row_index = line_number - object_ypos;
+        sprite_row_index = object_yflip ? 15 - (line_number - object_ypos) : line_number - object_ypos;
         vram_a = {object_spriteref, sprite_row_index};
         object = oam_d;
         if (!last_object_is_fetched && !done) begin
@@ -125,7 +125,7 @@ always_ff @(posedge clk, posedge rst) begin
         if (enable) begin
             if (!done && sprite_line_valid_q) begin
                 for (int i=0; i<16; i++) begin
-                    line_buffer[sprite_xpos+i] <= sprite_line[i];
+                    line_buffer[sprite_xpos+i] <= sprite_xflip ? sprite_line[15-i] : sprite_line[i];
                 end
             end
         end else begin
