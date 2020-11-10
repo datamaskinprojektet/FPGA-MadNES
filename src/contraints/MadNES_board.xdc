@@ -112,25 +112,25 @@ set_property -dict {PACKAGE_PIN C12 IOSTANDARD LVCMOS33} [get_ports {vga_frame_d
 ## VGA
 
 #RED CHANNEL
-set_property -dict {PACKAGE_PIN C3 IOSTANDARD LVCMOS33} [get_ports {vga_r[0]}];
-set_property -dict {PACKAGE_PIN B1 IOSTANDARD LVCMOS33} [get_ports {vga_r[1]}];
-set_property -dict {PACKAGE_PIN G2 IOSTANDARD LVCMOS33} [get_ports {vga_r[2]}];
-set_property -dict {PACKAGE_PIN H4 IOSTANDARD LVCMOS33} [get_ports {vga_r[3]}];
+#set_property -dict {PACKAGE_PIN C3 IOSTANDARD LVCMOS33} [get_ports {vga_r[0]}];
+set_property -dict {PACKAGE_PIN B1 IOSTANDARD LVCMOS33} [get_ports {vga_r[0]}];
+set_property -dict {PACKAGE_PIN G2 IOSTANDARD LVCMOS33} [get_ports {vga_r[1]}];
+set_property -dict {PACKAGE_PIN H4 IOSTANDARD LVCMOS33} [get_ports {vga_r[2]}];
 set_property -dict {PACKAGE_PIN F2 IOSTANDARD LVCMOS33} [get_ports {vga_r[3]}];
 
 #GREEN CHANNEL
-set_property -dict {PACKAGE_PIN F3 IOSTANDARD LVCMOS33} [get_ports {vga_g[0]}];
-set_property -dict {PACKAGE_PIN B2 IOSTANDARD LVCMOS33} [get_ports {vga_g[1]}];
-set_property -dict {PACKAGE_PIN C1 IOSTANDARD LVCMOS33} [get_ports {vga_g[2]}];
-set_property -dict {PACKAGE_PIN D1 IOSTANDARD LVCMOS33} [get_ports {vga_g[3]}];
-set_property -dict {PACKAGE_PIN G1 IOSTANDARD LVCMOS33} [get_ports {vga_g[3]}];
+#set_property -dict {PACKAGE_PIN F3 IOSTANDARD LVCMOS33} [get_ports {vga_g[0]}];
+#set_property -dict {PACKAGE_PIN B2 IOSTANDARD LVCMOS33} [get_ports {vga_g[1]}];
+set_property -dict {PACKAGE_PIN C1 IOSTANDARD LVCMOS33} [get_ports {vga_g[0]}];
+set_property -dict {PACKAGE_PIN D1 IOSTANDARD LVCMOS33} [get_ports {vga_g[1]}];
+set_property -dict {PACKAGE_PIN G1 IOSTANDARD LVCMOS33} [get_ports {vga_g[2]}];
 set_property -dict {PACKAGE_PIN E1 IOSTANDARD LVCMOS33} [get_ports {vga_g[3]}];
 
 #BLUE CHANNEL
-set_property -dict {PACKAGE_PIN A2 IOSTANDARD LVCMOS33} [get_ports {vga_b[0]}];
-set_property -dict {PACKAGE_PIN C2 IOSTANDARD LVCMOS33} [get_ports {vga_b[1]}];
-set_property -dict {PACKAGE_PIN E2 IOSTANDARD LVCMOS33} [get_ports {vga_b[2]}];
-set_property -dict {PACKAGE_PIN F4 IOSTANDARD LVCMOS33} [get_ports {vga_b[3]}];
+#set_property -dict {PACKAGE_PIN A2 IOSTANDARD LVCMOS33} [get_ports {vga_b[0]}];
+set_property -dict {PACKAGE_PIN C2 IOSTANDARD LVCMOS33} [get_ports {vga_b[0]}];
+set_property -dict {PACKAGE_PIN E2 IOSTANDARD LVCMOS33} [get_ports {vga_b[1]}];
+set_property -dict {PACKAGE_PIN F4 IOSTANDARD LVCMOS33} [get_ports {vga_b[2]}];
 set_property -dict {PACKAGE_PIN H5 IOSTANDARD LVCMOS33} [get_ports {vga_b[3]}];
 
 #SYNC
@@ -253,10 +253,11 @@ set_property -dict {PACKAGE_PIN D10 IOSTANDARD LVCMOS33} [get_ports {btn_rst}];
 #set_property -dict { PACKAGE_PIN H10   IOSTANDARD LVCMOS33 } [get_ports { div_clk[7] }]; #DONE
 #set_property -dict { PACKAGE_PIN K10   IOSTANDARD LVCMOS33 } [get_ports { div_clk[7] }]; #INIT_B
 
-set_property BITSTREAM.GENERAL.COMPRESS TRUE [current_design];
-set_property BITSTREAM.CONFIG.CONFIGRATE 33 [current_design];
+#set_property BITSTREAM.GENERAL.COMPRESS TRUE [current_design];
+#set_property BITSTREAM.CONFIG.CONFIGRATE 33 [current_design];
 set_property CFGBVS VCCO [current_design];
 set_property CONFIG_VOLTAGE 3.3 [current_design];
-set_property BITSTREAM.CONFIG.SPI_32BIT_ADDR YES [current_design];
-set_property BITSTREAM.CONFIG.SPI_BUSWIDTH 4 [current_design];
-set_property BITSTREAM.CONFIG.SPI_FALL_EDGE YES [current_design];
+#set_property BITSTREAM.CONFIG.SPI_32BIT_ADDR YES [current_design];
+#set_property BITSTREAM.CONFIG.SPI_BUSWIDTH 4 [current_design];
+#set_property BITSTREAM.CONFIG.SPI_FALL_EDGE YES [current_design];
+set_property BITSTREAM.CONFIG.UNUSEDPIN Pulldown [current_design];

@@ -99,14 +99,14 @@ set_property -name "platform.board_id" -value "arty" -objects $obj
 set_property -name "sim.central_dir" -value "$proj_dir/${_xil_proj_name_}.ip_user_files" -objects $obj
 set_property -name "sim.ip.auto_export_scripts" -value "1" -objects $obj
 set_property -name "simulator_language" -value "Mixed" -objects $obj
-set_property -name "webtalk.activehdl_export_sim" -value "10" -objects $obj
-set_property -name "webtalk.ies_export_sim" -value "10" -objects $obj
-set_property -name "webtalk.modelsim_export_sim" -value "10" -objects $obj
-set_property -name "webtalk.questa_export_sim" -value "10" -objects $obj
-set_property -name "webtalk.riviera_export_sim" -value "10" -objects $obj
-set_property -name "webtalk.vcs_export_sim" -value "10" -objects $obj
-set_property -name "webtalk.xsim_export_sim" -value "10" -objects $obj
-set_property -name "webtalk.xsim_launch_sim" -value "455" -objects $obj
+set_property -name "webtalk.activehdl_export_sim" -value "11" -objects $obj
+set_property -name "webtalk.ies_export_sim" -value "11" -objects $obj
+set_property -name "webtalk.modelsim_export_sim" -value "11" -objects $obj
+set_property -name "webtalk.questa_export_sim" -value "11" -objects $obj
+set_property -name "webtalk.riviera_export_sim" -value "11" -objects $obj
+set_property -name "webtalk.vcs_export_sim" -value "11" -objects $obj
+set_property -name "webtalk.xsim_export_sim" -value "11" -objects $obj
+set_property -name "webtalk.xsim_launch_sim" -value "481" -objects $obj
 set_property -name "xpm_libraries" -value "XPM_CDC XPM_MEMORY" -objects $obj
 
 # Create 'sources_1' fileset (if not found)
@@ -340,6 +340,7 @@ if { $obj != "" } {
 
 }
 set obj [get_runs Devboard]
+set_property -name "needs_refresh" -value "1" -objects $obj
 set_property -name "part" -value "xc7a35ticsg324-1L" -objects $obj
 set_property -name "strategy" -value "Vivado Synthesis Defaults" -objects $obj
 
@@ -581,6 +582,221 @@ set_property -name "options.warn_on_violation" -value "1" -objects $obj
 set obj [get_runs impl_2]
 set_property -name "constrset" -value "MadNes_Board" -objects $obj
 set_property -name "part" -value "xc7a100tftg256-3" -objects $obj
+set_property -name "strategy" -value "Vivado Implementation Defaults" -objects $obj
+set_property -name "steps.write_bitstream.args.bin_file" -value "1" -objects $obj
+set_property -name "steps.write_bitstream.args.readback_file" -value "0" -objects $obj
+set_property -name "steps.write_bitstream.args.verbose" -value "0" -objects $obj
+
+# Create 'devboard_imp' run (if not found)
+if {[string equal [get_runs -quiet devboard_imp] ""]} {
+    create_run -name devboard_imp -part xc7a35ticsg324-1L -flow {Vivado Implementation 2020} -strategy "Vivado Implementation Defaults" -report_strategy {No Reports} -constrset constrs_1 -parent_run Devboard
+} else {
+  set_property strategy "Vivado Implementation Defaults" [get_runs devboard_imp]
+  set_property flow "Vivado Implementation 2020" [get_runs devboard_imp]
+}
+set obj [get_runs devboard_imp]
+set_property set_report_strategy_name 1 $obj
+set_property report_strategy {Vivado Implementation Default Reports} $obj
+set_property set_report_strategy_name 0 $obj
+# Create 'devboard_imp_init_report_timing_summary_0' report (if not found)
+if { [ string equal [get_report_configs -of_objects [get_runs devboard_imp] devboard_imp_init_report_timing_summary_0] "" ] } {
+  create_report_config -report_name devboard_imp_init_report_timing_summary_0 -report_type report_timing_summary:1.0 -steps init_design -runs devboard_imp
+}
+set obj [get_report_configs -of_objects [get_runs devboard_imp] devboard_imp_init_report_timing_summary_0]
+if { $obj != "" } {
+set_property -name "is_enabled" -value "0" -objects $obj
+set_property -name "options.max_paths" -value "10" -objects $obj
+
+}
+# Create 'devboard_imp_opt_report_drc_0' report (if not found)
+if { [ string equal [get_report_configs -of_objects [get_runs devboard_imp] devboard_imp_opt_report_drc_0] "" ] } {
+  create_report_config -report_name devboard_imp_opt_report_drc_0 -report_type report_drc:1.0 -steps opt_design -runs devboard_imp
+}
+set obj [get_report_configs -of_objects [get_runs devboard_imp] devboard_imp_opt_report_drc_0]
+if { $obj != "" } {
+
+}
+# Create 'devboard_imp_opt_report_timing_summary_0' report (if not found)
+if { [ string equal [get_report_configs -of_objects [get_runs devboard_imp] devboard_imp_opt_report_timing_summary_0] "" ] } {
+  create_report_config -report_name devboard_imp_opt_report_timing_summary_0 -report_type report_timing_summary:1.0 -steps opt_design -runs devboard_imp
+}
+set obj [get_report_configs -of_objects [get_runs devboard_imp] devboard_imp_opt_report_timing_summary_0]
+if { $obj != "" } {
+set_property -name "is_enabled" -value "0" -objects $obj
+set_property -name "options.max_paths" -value "10" -objects $obj
+
+}
+# Create 'devboard_imp_power_opt_report_timing_summary_0' report (if not found)
+if { [ string equal [get_report_configs -of_objects [get_runs devboard_imp] devboard_imp_power_opt_report_timing_summary_0] "" ] } {
+  create_report_config -report_name devboard_imp_power_opt_report_timing_summary_0 -report_type report_timing_summary:1.0 -steps power_opt_design -runs devboard_imp
+}
+set obj [get_report_configs -of_objects [get_runs devboard_imp] devboard_imp_power_opt_report_timing_summary_0]
+if { $obj != "" } {
+set_property -name "is_enabled" -value "0" -objects $obj
+set_property -name "options.max_paths" -value "10" -objects $obj
+
+}
+# Create 'devboard_imp_place_report_io_0' report (if not found)
+if { [ string equal [get_report_configs -of_objects [get_runs devboard_imp] devboard_imp_place_report_io_0] "" ] } {
+  create_report_config -report_name devboard_imp_place_report_io_0 -report_type report_io:1.0 -steps place_design -runs devboard_imp
+}
+set obj [get_report_configs -of_objects [get_runs devboard_imp] devboard_imp_place_report_io_0]
+if { $obj != "" } {
+
+}
+# Create 'devboard_imp_place_report_utilization_0' report (if not found)
+if { [ string equal [get_report_configs -of_objects [get_runs devboard_imp] devboard_imp_place_report_utilization_0] "" ] } {
+  create_report_config -report_name devboard_imp_place_report_utilization_0 -report_type report_utilization:1.0 -steps place_design -runs devboard_imp
+}
+set obj [get_report_configs -of_objects [get_runs devboard_imp] devboard_imp_place_report_utilization_0]
+if { $obj != "" } {
+
+}
+# Create 'devboard_imp_place_report_control_sets_0' report (if not found)
+if { [ string equal [get_report_configs -of_objects [get_runs devboard_imp] devboard_imp_place_report_control_sets_0] "" ] } {
+  create_report_config -report_name devboard_imp_place_report_control_sets_0 -report_type report_control_sets:1.0 -steps place_design -runs devboard_imp
+}
+set obj [get_report_configs -of_objects [get_runs devboard_imp] devboard_imp_place_report_control_sets_0]
+if { $obj != "" } {
+set_property -name "options.verbose" -value "1" -objects $obj
+
+}
+# Create 'devboard_imp_place_report_incremental_reuse_0' report (if not found)
+if { [ string equal [get_report_configs -of_objects [get_runs devboard_imp] devboard_imp_place_report_incremental_reuse_0] "" ] } {
+  create_report_config -report_name devboard_imp_place_report_incremental_reuse_0 -report_type report_incremental_reuse:1.0 -steps place_design -runs devboard_imp
+}
+set obj [get_report_configs -of_objects [get_runs devboard_imp] devboard_imp_place_report_incremental_reuse_0]
+if { $obj != "" } {
+set_property -name "is_enabled" -value "0" -objects $obj
+
+}
+# Create 'devboard_imp_place_report_incremental_reuse_1' report (if not found)
+if { [ string equal [get_report_configs -of_objects [get_runs devboard_imp] devboard_imp_place_report_incremental_reuse_1] "" ] } {
+  create_report_config -report_name devboard_imp_place_report_incremental_reuse_1 -report_type report_incremental_reuse:1.0 -steps place_design -runs devboard_imp
+}
+set obj [get_report_configs -of_objects [get_runs devboard_imp] devboard_imp_place_report_incremental_reuse_1]
+if { $obj != "" } {
+set_property -name "is_enabled" -value "0" -objects $obj
+
+}
+# Create 'devboard_imp_place_report_timing_summary_0' report (if not found)
+if { [ string equal [get_report_configs -of_objects [get_runs devboard_imp] devboard_imp_place_report_timing_summary_0] "" ] } {
+  create_report_config -report_name devboard_imp_place_report_timing_summary_0 -report_type report_timing_summary:1.0 -steps place_design -runs devboard_imp
+}
+set obj [get_report_configs -of_objects [get_runs devboard_imp] devboard_imp_place_report_timing_summary_0]
+if { $obj != "" } {
+set_property -name "is_enabled" -value "0" -objects $obj
+set_property -name "options.max_paths" -value "10" -objects $obj
+
+}
+# Create 'devboard_imp_post_place_power_opt_report_timing_summary_0' report (if not found)
+if { [ string equal [get_report_configs -of_objects [get_runs devboard_imp] devboard_imp_post_place_power_opt_report_timing_summary_0] "" ] } {
+  create_report_config -report_name devboard_imp_post_place_power_opt_report_timing_summary_0 -report_type report_timing_summary:1.0 -steps post_place_power_opt_design -runs devboard_imp
+}
+set obj [get_report_configs -of_objects [get_runs devboard_imp] devboard_imp_post_place_power_opt_report_timing_summary_0]
+if { $obj != "" } {
+set_property -name "is_enabled" -value "0" -objects $obj
+set_property -name "options.max_paths" -value "10" -objects $obj
+
+}
+# Create 'devboard_imp_phys_opt_report_timing_summary_0' report (if not found)
+if { [ string equal [get_report_configs -of_objects [get_runs devboard_imp] devboard_imp_phys_opt_report_timing_summary_0] "" ] } {
+  create_report_config -report_name devboard_imp_phys_opt_report_timing_summary_0 -report_type report_timing_summary:1.0 -steps phys_opt_design -runs devboard_imp
+}
+set obj [get_report_configs -of_objects [get_runs devboard_imp] devboard_imp_phys_opt_report_timing_summary_0]
+if { $obj != "" } {
+set_property -name "is_enabled" -value "0" -objects $obj
+set_property -name "options.max_paths" -value "10" -objects $obj
+
+}
+# Create 'devboard_imp_route_report_drc_0' report (if not found)
+if { [ string equal [get_report_configs -of_objects [get_runs devboard_imp] devboard_imp_route_report_drc_0] "" ] } {
+  create_report_config -report_name devboard_imp_route_report_drc_0 -report_type report_drc:1.0 -steps route_design -runs devboard_imp
+}
+set obj [get_report_configs -of_objects [get_runs devboard_imp] devboard_imp_route_report_drc_0]
+if { $obj != "" } {
+
+}
+# Create 'devboard_imp_route_report_methodology_0' report (if not found)
+if { [ string equal [get_report_configs -of_objects [get_runs devboard_imp] devboard_imp_route_report_methodology_0] "" ] } {
+  create_report_config -report_name devboard_imp_route_report_methodology_0 -report_type report_methodology:1.0 -steps route_design -runs devboard_imp
+}
+set obj [get_report_configs -of_objects [get_runs devboard_imp] devboard_imp_route_report_methodology_0]
+if { $obj != "" } {
+
+}
+# Create 'devboard_imp_route_report_power_0' report (if not found)
+if { [ string equal [get_report_configs -of_objects [get_runs devboard_imp] devboard_imp_route_report_power_0] "" ] } {
+  create_report_config -report_name devboard_imp_route_report_power_0 -report_type report_power:1.0 -steps route_design -runs devboard_imp
+}
+set obj [get_report_configs -of_objects [get_runs devboard_imp] devboard_imp_route_report_power_0]
+if { $obj != "" } {
+
+}
+# Create 'devboard_imp_route_report_route_status_0' report (if not found)
+if { [ string equal [get_report_configs -of_objects [get_runs devboard_imp] devboard_imp_route_report_route_status_0] "" ] } {
+  create_report_config -report_name devboard_imp_route_report_route_status_0 -report_type report_route_status:1.0 -steps route_design -runs devboard_imp
+}
+set obj [get_report_configs -of_objects [get_runs devboard_imp] devboard_imp_route_report_route_status_0]
+if { $obj != "" } {
+
+}
+# Create 'devboard_imp_route_report_timing_summary_0' report (if not found)
+if { [ string equal [get_report_configs -of_objects [get_runs devboard_imp] devboard_imp_route_report_timing_summary_0] "" ] } {
+  create_report_config -report_name devboard_imp_route_report_timing_summary_0 -report_type report_timing_summary:1.0 -steps route_design -runs devboard_imp
+}
+set obj [get_report_configs -of_objects [get_runs devboard_imp] devboard_imp_route_report_timing_summary_0]
+if { $obj != "" } {
+set_property -name "options.max_paths" -value "10" -objects $obj
+
+}
+# Create 'devboard_imp_route_report_incremental_reuse_0' report (if not found)
+if { [ string equal [get_report_configs -of_objects [get_runs devboard_imp] devboard_imp_route_report_incremental_reuse_0] "" ] } {
+  create_report_config -report_name devboard_imp_route_report_incremental_reuse_0 -report_type report_incremental_reuse:1.0 -steps route_design -runs devboard_imp
+}
+set obj [get_report_configs -of_objects [get_runs devboard_imp] devboard_imp_route_report_incremental_reuse_0]
+if { $obj != "" } {
+
+}
+# Create 'devboard_imp_route_report_clock_utilization_0' report (if not found)
+if { [ string equal [get_report_configs -of_objects [get_runs devboard_imp] devboard_imp_route_report_clock_utilization_0] "" ] } {
+  create_report_config -report_name devboard_imp_route_report_clock_utilization_0 -report_type report_clock_utilization:1.0 -steps route_design -runs devboard_imp
+}
+set obj [get_report_configs -of_objects [get_runs devboard_imp] devboard_imp_route_report_clock_utilization_0]
+if { $obj != "" } {
+
+}
+# Create 'devboard_imp_route_report_bus_skew_0' report (if not found)
+if { [ string equal [get_report_configs -of_objects [get_runs devboard_imp] devboard_imp_route_report_bus_skew_0] "" ] } {
+  create_report_config -report_name devboard_imp_route_report_bus_skew_0 -report_type report_bus_skew:1.1 -steps route_design -runs devboard_imp
+}
+set obj [get_report_configs -of_objects [get_runs devboard_imp] devboard_imp_route_report_bus_skew_0]
+if { $obj != "" } {
+set_property -name "options.warn_on_violation" -value "1" -objects $obj
+
+}
+# Create 'devboard_imp_post_route_phys_opt_report_timing_summary_0' report (if not found)
+if { [ string equal [get_report_configs -of_objects [get_runs devboard_imp] devboard_imp_post_route_phys_opt_report_timing_summary_0] "" ] } {
+  create_report_config -report_name devboard_imp_post_route_phys_opt_report_timing_summary_0 -report_type report_timing_summary:1.0 -steps post_route_phys_opt_design -runs devboard_imp
+}
+set obj [get_report_configs -of_objects [get_runs devboard_imp] devboard_imp_post_route_phys_opt_report_timing_summary_0]
+if { $obj != "" } {
+set_property -name "options.max_paths" -value "10" -objects $obj
+set_property -name "options.warn_on_violation" -value "1" -objects $obj
+
+}
+# Create 'devboard_imp_post_route_phys_opt_report_bus_skew_0' report (if not found)
+if { [ string equal [get_report_configs -of_objects [get_runs devboard_imp] devboard_imp_post_route_phys_opt_report_bus_skew_0] "" ] } {
+  create_report_config -report_name devboard_imp_post_route_phys_opt_report_bus_skew_0 -report_type report_bus_skew:1.1 -steps post_route_phys_opt_design -runs devboard_imp
+}
+set obj [get_report_configs -of_objects [get_runs devboard_imp] devboard_imp_post_route_phys_opt_report_bus_skew_0]
+if { $obj != "" } {
+set_property -name "options.warn_on_violation" -value "1" -objects $obj
+
+}
+set obj [get_runs devboard_imp]
+set_property -name "needs_refresh" -value "1" -objects $obj
+set_property -name "part" -value "xc7a35ticsg324-1L" -objects $obj
 set_property -name "strategy" -value "Vivado Implementation Defaults" -objects $obj
 set_property -name "steps.write_bitstream.args.bin_file" -value "1" -objects $obj
 set_property -name "steps.write_bitstream.args.readback_file" -value "0" -objects $obj
