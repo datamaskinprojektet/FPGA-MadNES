@@ -166,7 +166,7 @@ module display_driver (
         .line_prepared  (prepare_line_done)
     );
 
-    logic [H_RES-1:0][7:0] LineBuffer_next_line;
+    logic [1:0][H_RES-1:0][7:0] LineBuffer_next_line_priority;
     logic [H_RES-1:0][7:0] LineBuffer_current_line;
 
     wire sprite_drawer_done;
@@ -181,17 +181,17 @@ module display_driver (
         .DISPLAY_HEIGHT       ( 480       ) ,
         .LINE_NUMBER_WIDTH    ( $size(sy) )
     ) u_sprite_drawer (
-        .clk             (clk_pix                      ) ,
-        .rst             (!btn_rst                     ) ,
-        .enable          (prepare_line_done            ) ,
-        .done            (sprite_drawer_done           ) ,
-        .oam_a           (oam_read_address_draw_sprite ) ,
-        .oam_d           (oam_read_data                ) ,
-        .vram_a          (sprite_read_address          ) ,
-        .vram_d          (sprite_read_data             ) ,
-        .second_array    (LineObjectArray              ) ,
-        .line_number     (sy                           ) ,
-        .line_buffer     (LineBuffer_next_line         )
+        .clk                        (clk_pix                          ) ,
+        .rst                        (!btn_rst                         ) ,
+        .enable                     (prepare_line_done                ) ,
+        .done                       (sprite_drawer_done               ) ,
+        .oam_a                      (oam_read_address_draw_sprite     ) ,
+        .oam_d                      (oam_read_data                    ) ,
+        .vram_a                     (sprite_read_address              ) ,
+        .vram_d                     (sprite_read_data                 ) ,
+        .second_array               (LineObjectArray                  ) ,
+        .line_number                (sy                               ) ,
+        .line_buffer_priority       (LineBuffer_next_line_priority    )
     );
 
     logic animate;  // high for one clock tick at start of blanking
@@ -205,7 +205,14 @@ module display_driver (
 
     always_ff @(posedge clk_pix) begin
         if (last_y != sy) begin
-            LineBuffer_current_line <= LineBuffer_next_line;
+            for (int i=0; i<H_RES; i++) begin
+                if (LineBuffer_next_line_priority[1][i] != 0) begin
+                    LineBuffer_current_line[i] <= LineBuffer_next_line_priority[1][i];
+                end
+                else begin
+                    LineBuffer_current_line[i] <= LineBuffer_next_line_priority[0][i];
+                end
+            end
         end
         last_y <= sy;
     end

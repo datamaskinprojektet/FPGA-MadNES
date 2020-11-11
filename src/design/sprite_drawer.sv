@@ -32,7 +32,7 @@ module sprite_drawer #(
     input wire   [VRAM_DATA_SIZE-1:0] vram_d,
     input wire   [SECOND_ARRAY_SIZE-1:0][OAM_ADDR_SIZE:0] second_array, // [OAM_ADDR_SIZE:1] is address, [0] is active/inactive
     input wire   [LINE_NUMBER_WIDTH-1:0] line_number,
-    output logic [DISPLAY_WIDTH-1:0][7:0] line_buffer
+    output logic [1:0][DISPLAY_WIDTH-1:0][7:0] line_buffer_priority
 );
 
 localparam int SECOND_ARRAY_INDEX_WIDTH = $clog2(SECOND_ARRAY_SIZE);
@@ -66,6 +66,7 @@ assign object_enable    = object[31];
 // Shifted object properties for spriteline use
 logic [9:0] sprite_xpos;
 logic sprite_xflip;
+logic sprite_priority;
 
 logic [15:0][7:0] sprite_line;
 logic [3:0] sprite_row_index;
@@ -102,7 +103,7 @@ always_ff @(posedge clk, posedge rst) begin
         priority_q <= 0;
         array_index_q <= 0;
         done <= 0;
-        line_buffer <= 0;
+        line_buffer_priority <= 0;
         sprite_line_valid_q <= 0;
     end else begin
         priority_q <= priority_d;
@@ -120,16 +121,17 @@ always_ff @(posedge clk, posedge rst) begin
         // -------- Shift object properties used when writing spriteline --------
         sprite_xpos <= object_xpos;
         sprite_xflip <= object_xflip;
+        sprite_priority <= object_priority;
 
         // -------- Draw to linebuffer --------
         if (enable) begin
             if (!done && sprite_line_valid_q) begin
                 for (int i=0; i<16; i++) begin
-                    line_buffer[sprite_xpos+i] <= sprite_xflip ? sprite_line[15-i] : sprite_line[i];
+                    line_buffer_priority[sprite_priority][sprite_xpos+i] <= sprite_xflip ? sprite_line[15-i] : sprite_line[i];
                 end
             end
         end else begin
-            line_buffer <= 0;
+            line_buffer_priority <= 0;
         end
     end
 end
