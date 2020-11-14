@@ -106,7 +106,7 @@ set_property -name "webtalk.questa_export_sim" -value "11" -objects $obj
 set_property -name "webtalk.riviera_export_sim" -value "11" -objects $obj
 set_property -name "webtalk.vcs_export_sim" -value "11" -objects $obj
 set_property -name "webtalk.xsim_export_sim" -value "11" -objects $obj
-set_property -name "webtalk.xsim_launch_sim" -value "481" -objects $obj
+set_property -name "webtalk.xsim_launch_sim" -value "559" -objects $obj
 set_property -name "xpm_libraries" -value "XPM_CDC XPM_MEMORY" -objects $obj
 
 # Create 'sources_1' fileset (if not found)
@@ -340,7 +340,6 @@ if { $obj != "" } {
 
 }
 set obj [get_runs Devboard]
-set_property -name "needs_refresh" -value "1" -objects $obj
 set_property -name "part" -value "xc7a35ticsg324-1L" -objects $obj
 set_property -name "strategy" -value "Vivado Synthesis Defaults" -objects $obj
 
@@ -795,7 +794,6 @@ set_property -name "options.warn_on_violation" -value "1" -objects $obj
 
 }
 set obj [get_runs devboard_imp]
-set_property -name "needs_refresh" -value "1" -objects $obj
 set_property -name "part" -value "xc7a35ticsg324-1L" -objects $obj
 set_property -name "strategy" -value "Vivado Implementation Defaults" -objects $obj
 set_property -name "steps.write_bitstream.args.bin_file" -value "1" -objects $obj
