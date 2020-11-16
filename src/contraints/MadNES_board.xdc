@@ -8,6 +8,8 @@ set_property ALLOW_COMBINATORIAL_LOOPS TRUE [get_nets {u_ebi_interface/data_read
 set_property ALLOW_COMBINATORIAL_LOOPS TRUE [get_nets {u_ebi_interface/not_A_n_0}];
 set_property ALLOW_COMBINATORIAL_LOOPS TRUE [get_nets {u_ebi_interface/not_A_n_0_0}];
 set_property ALLOW_COMBINATORIAL_LOOPS TRUE [get_nets {u_ebi_interface/not_A__0_n_0}];
+set_property ALLOW_COMBINATORIAL_LOOPS TRUE [get_nets {u_ebi_interface/data_ready_i_2_n_0}];
+set_property ALLOW_COMBINATORIAL_LOOPS TRUE [get_nets {u_ebi_interface/data_ready_i_3_n_0}];
 set_property ALLOW_COMBINATORIAL_LOOPS TRUE [get_nets {clock_640x480/data_ready_i_2_n_0}];
 
 ## Master Clock: 100 MHz
@@ -112,26 +114,26 @@ set_property -dict {PACKAGE_PIN C12 IOSTANDARD LVCMOS33} [get_ports {vga_frame_d
 ## VGA
 
 #RED CHANNEL
-#set_property -dict {PACKAGE_PIN C3 IOSTANDARD LVCMOS33} [get_ports {vga_r[0]}]; #VGA_R1
-set_property -dict {PACKAGE_PIN B1 IOSTANDARD LVCMOS33} [get_ports {vga_r[0]}]; #VGA_R2
-set_property -dict {PACKAGE_PIN G2 IOSTANDARD LVCMOS33} [get_ports {vga_r[1]}]; #VGA_R3
-set_property -dict {PACKAGE_PIN H4 IOSTANDARD LVCMOS33} [get_ports {vga_r[2]}]; #VGA_R4
-set_property -dict {PACKAGE_PIN F2 IOSTANDARD LVCMOS33} [get_ports {vga_r[3]}]; #VGA_R5
+set_property -dict {PACKAGE_PIN C3 IOSTANDARD LVCMOS33} [get_ports {vga_r[0]}]; #VGA_R1
+set_property -dict {PACKAGE_PIN B1 IOSTANDARD LVCMOS33} [get_ports {vga_r[1]}]; #VGA_R2
+set_property -dict {PACKAGE_PIN G2 IOSTANDARD LVCMOS33} [get_ports {vga_r[2]}]; #VGA_R3
+set_property -dict {PACKAGE_PIN H4 IOSTANDARD LVCMOS33} [get_ports {vga_r[3]}]; #VGA_R4
+set_property -dict {PACKAGE_PIN F2 IOSTANDARD LVCMOS33} [get_ports {vga_r[4]}]; #VGA_R5
 
 #GREEN CHANNEL
-#set_property -dict {PACKAGE_PIN F3 IOSTANDARD LVCMOS33} [get_ports {vga_g[0]}]; #VGA_G0
-#set_property -dict {PACKAGE_PIN B2 IOSTANDARD LVCMOS33} [get_ports {vga_g[1]}]; #VGA_G1
-set_property -dict {PACKAGE_PIN C1 IOSTANDARD LVCMOS33} [get_ports {vga_g[0]}]; #VGA_G2
-set_property -dict {PACKAGE_PIN D1 IOSTANDARD LVCMOS33} [get_ports {vga_g[1]}]; #VGA_G3
-set_property -dict {PACKAGE_PIN G1 IOSTANDARD LVCMOS33} [get_ports {vga_g[2]}]; #VGA_G4
-set_property -dict {PACKAGE_PIN E1 IOSTANDARD LVCMOS33} [get_ports {vga_g[3]}]; #VGA_G5
+set_property -dict {PACKAGE_PIN F3 IOSTANDARD LVCMOS33} [get_ports {vga_g[0]}]; #VGA_G0
+set_property -dict {PACKAGE_PIN B2 IOSTANDARD LVCMOS33} [get_ports {vga_g[1]}]; #VGA_G1
+set_property -dict {PACKAGE_PIN C1 IOSTANDARD LVCMOS33} [get_ports {vga_g[2]}]; #VGA_G2
+set_property -dict {PACKAGE_PIN D1 IOSTANDARD LVCMOS33} [get_ports {vga_g[3]}]; #VGA_G3
+set_property -dict {PACKAGE_PIN G1 IOSTANDARD LVCMOS33} [get_ports {vga_g[4]}]; #VGA_G4
+set_property -dict {PACKAGE_PIN E1 IOSTANDARD LVCMOS33} [get_ports {vga_g[5]}]; #VGA_G5
 
 #BLUE CHANNEL
-#set_property -dict {PACKAGE_PIN A2 IOSTANDARD LVCMOS33} [get_ports {vga_b[0]}]; #VGA_B1
-set_property -dict {PACKAGE_PIN C2 IOSTANDARD LVCMOS33} [get_ports {vga_b[0]}]; #VGA_B2
-set_property -dict {PACKAGE_PIN E2 IOSTANDARD LVCMOS33} [get_ports {vga_b[1]}]; #VGA_B3
-set_property -dict {PACKAGE_PIN F4 IOSTANDARD LVCMOS33} [get_ports {vga_b[2]}]; #VGA_B4
-set_property -dict {PACKAGE_PIN H5 IOSTANDARD LVCMOS33} [get_ports {vga_b[3]}]; #VGA_B5
+set_property -dict {PACKAGE_PIN A2 IOSTANDARD LVCMOS33} [get_ports {vga_b[0]}]; #VGA_B1
+set_property -dict {PACKAGE_PIN C2 IOSTANDARD LVCMOS33} [get_ports {vga_b[1]}]; #VGA_B2
+set_property -dict {PACKAGE_PIN E2 IOSTANDARD LVCMOS33} [get_ports {vga_b[2]}]; #VGA_B3
+set_property -dict {PACKAGE_PIN F4 IOSTANDARD LVCMOS33} [get_ports {vga_b[3]}]; #VGA_B4
+set_property -dict {PACKAGE_PIN H5 IOSTANDARD LVCMOS33} [get_ports {vga_b[4]}]; #VGA_B5
 
 #SYNC
 

@@ -18,9 +18,9 @@ module top_test_tb();
     logic [7:0] vga_r_8_bit;
     logic [7:0] vga_g_8_bit;
     logic [7:0] vga_b_8_bit;
-    logic [3:0] vga_r;
-    logic [3:0] vga_g;
-    logic [3:0] vga_b;
+    logic [4:0] vga_r;
+    logic [5:0] vga_g;
+    logic [4:0] vga_b;
     logic [50:0] clk_count;
     logic vga_frame_done;
 
@@ -77,12 +77,27 @@ module top_test_tb();
         #3000;
     endtask
 
+    task testOneFrame();
+        wait(vga_vsync== 1'b0);
+        @(posedge dut_display_driver.clk_pix);
+    endtask
+
+    task testFrameWrapover();
+        dut_display_driver.timings_640x480.sy = 450;
+        #2;
+        dut_display_driver.timings_640x480.sy = 450;
+        #2;
+        dut_display_driver.timings_640x480.sy = 450;
+        wait(dut_display_driver.sy == 20);
+        @(posedge dut_display_driver.clk_pix);
+    endtask
+
     always @ (posedge dut_display_driver.clk_pix)
     begin
         clk_count++;
         if(dut_display_driver.de)
         begin
-            $fwrite(fd,"%d,%d,%d,%d,%d\n",dut_display_driver.sx,dut_display_driver.sy,(vga_r_8_bit << 4),(vga_g_8_bit << 4),(vga_b_8_bit << 4));
+            $fwrite(fd,"%d,%d,%d,%d,%d\n",dut_display_driver.sx,dut_display_driver.sy,(vga_r_8_bit << 3),(vga_g_8_bit << 2),(vga_b_8_bit << 3));
         end
     end
     always @ (posedge dut_display_driver.clk_pix)
@@ -100,8 +115,8 @@ module top_test_tb();
     resetModule();
     $display("topmodule testing");
     //#18_000_000; // 18 ms (one frame is 16.7 ms)
-    wait(vga_vsync== 1'b0);
-    @(posedge dut_display_driver.clk_pix);
+    testOneFrame();
+    //testFrameWrapover();
     $fclose(fd);
     $finish; 
     end

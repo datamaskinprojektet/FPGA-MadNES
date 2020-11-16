@@ -13,9 +13,9 @@ module display_driver (
 
     output      logic       vga_hsync,    // horizontal sync
     output      logic       vga_vsync,    // vertical sync
-    output      logic [3:0] vga_r,        // 4-bit VGA red
-    output      logic [3:0] vga_g,        // 4-bit VGA green
-    output      logic [3:0] vga_b,         // 4-bit VGA blue
+    output      logic [4:0] vga_r,        // 4-bit VGA red
+    output      logic [5:0] vga_g,        // 4-bit VGA green
+    output      logic [4:0] vga_b,         // 4-bit VGA blue
     output      wire        vga_frame_done // Interrupt for indicating frame is done.
     );
 
@@ -217,12 +217,12 @@ module display_driver (
         last_y <= sy;
     end
     // changed from sx_next to sx to fix offset error, maybe needed in the future for buffering?
-    assign palette_read_addr = !de ? 8'h0 : LineBuffer_current_line[sx];
+    assign palette_read_addr = !de ? 9'h0 : LineBuffer_current_line[sx];
 
     // VGA output
     always_comb begin
-        vga_r = (!de) ? (4'h0) : (palette_read_data[23 -: 4]);
-        vga_g = (!de) ? (4'h0) : (palette_read_data[15 -: 4]);
-        vga_b = (!de) ? (4'h0) : (palette_read_data[7  -: 4]);
+        vga_r = (!de) ? (5'h0) : (palette_read_data[23 -: 5]);
+        vga_g = (!de) ? (6'h0) : (palette_read_data[15 -: 6]);
+        vga_b = (!de) ? (5'h0) : (palette_read_data[7  -: 5]);
     end
 endmodule

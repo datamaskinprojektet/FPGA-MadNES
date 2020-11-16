@@ -99,14 +99,15 @@ set_property -name "platform.board_id" -value "arty" -objects $obj
 set_property -name "sim.central_dir" -value "$proj_dir/${_xil_proj_name_}.ip_user_files" -objects $obj
 set_property -name "sim.ip.auto_export_scripts" -value "1" -objects $obj
 set_property -name "simulator_language" -value "Mixed" -objects $obj
-set_property -name "webtalk.activehdl_export_sim" -value "11" -objects $obj
-set_property -name "webtalk.ies_export_sim" -value "11" -objects $obj
-set_property -name "webtalk.modelsim_export_sim" -value "11" -objects $obj
-set_property -name "webtalk.questa_export_sim" -value "11" -objects $obj
-set_property -name "webtalk.riviera_export_sim" -value "11" -objects $obj
-set_property -name "webtalk.vcs_export_sim" -value "11" -objects $obj
-set_property -name "webtalk.xsim_export_sim" -value "11" -objects $obj
-set_property -name "webtalk.xsim_launch_sim" -value "559" -objects $obj
+set_property -name "webtalk.activehdl_export_sim" -value "20" -objects $obj
+set_property -name "webtalk.ies_export_sim" -value "20" -objects $obj
+set_property -name "webtalk.modelsim_export_sim" -value "20" -objects $obj
+set_property -name "webtalk.questa_export_sim" -value "20" -objects $obj
+set_property -name "webtalk.riviera_export_sim" -value "20" -objects $obj
+set_property -name "webtalk.vcs_export_sim" -value "20" -objects $obj
+set_property -name "webtalk.xcelium_export_sim" -value "9" -objects $obj
+set_property -name "webtalk.xsim_export_sim" -value "20" -objects $obj
+set_property -name "webtalk.xsim_launch_sim" -value "598" -objects $obj
 set_property -name "xpm_libraries" -value "XPM_CDC XPM_MEMORY" -objects $obj
 
 # Create 'sources_1' fileset (if not found)
@@ -340,6 +341,7 @@ if { $obj != "" } {
 
 }
 set obj [get_runs Devboard]
+set_property -name "needs_refresh" -value "1" -objects $obj
 set_property -name "part" -value "xc7a35ticsg324-1L" -objects $obj
 set_property -name "strategy" -value "Vivado Synthesis Defaults" -objects $obj
 
@@ -794,6 +796,7 @@ set_property -name "options.warn_on_violation" -value "1" -objects $obj
 
 }
 set obj [get_runs devboard_imp]
+set_property -name "needs_refresh" -value "1" -objects $obj
 set_property -name "part" -value "xc7a35ticsg324-1L" -objects $obj
 set_property -name "strategy" -value "Vivado Implementation Defaults" -objects $obj
 set_property -name "steps.write_bitstream.args.bin_file" -value "1" -objects $obj
