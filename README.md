@@ -3,6 +3,10 @@
 
 A 480p (VGA) 16 bit sprite rendering processing unit used for the Datamaskinprosjekt 2020 (computerproject) at NTNU. 
 
+## General MadNES system overview
+![](Madnes_overview.png)
+## FPGA module overview
+![](FPGA_Overview.png)
 ## Interfacing
 
 The MadNES PPU consists of sprite, pallet and object memory which can be accessed over a memory bus.
