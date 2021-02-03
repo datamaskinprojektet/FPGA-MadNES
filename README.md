@@ -3,6 +3,11 @@
 
 A 480p (VGA) 16 bit sprite rendering processing unit used for the Datamaskinprosjekt 2020 (computerproject) at NTNU. 
 
+## Simple demo video
+This is a simple demo video of a astroids inspired game running with the MadNES sprite rendering processing unit. A better and more direct recording of the VGA picture will be done at a later date. (clickable link below)
+
+[![MadNES demo](https://img.youtube.com/vi/tePS2egCsAU/0.jpg)](https://www.youtube.com/watch?v=tePS2egCsAU)
+
 ## General MadNES system overview
 ![](Madnes_overview.png)
 ## FPGA module overview
